@@ -1,730 +1,617 @@
-import { useMemo, useRef, useState } from "react";
+import { AnimatePresence, motion as Motion, useReducedMotion } from "framer-motion";
+import { useState } from "react";
+import Icon from "../components/landing/Icon";
+import Reveal from "../components/landing/Reveal";
 import {
-  Accordion,
-  AccordionDetails,
-  AccordionSummary,
-  Chip,
-  Typography,
-} from "@mui/material";
-import ExpandMoreRoundedIcon from "@mui/icons-material/ExpandMoreRounded";
-import { motion as Motion, useReducedMotion, useScroll, useTransform } from "framer-motion";
-import { Link } from "react-router-dom";
-import SiteFooter from "../components/site/SiteFooter";
-import SiteHeader from "../components/site/SiteHeader";
-import { calculateShippingEstimate } from "../utils/shippingCalculator";
-import {
-  clientLogos,
-  courierPartners,
+  BRAND_NAME,
+  carrierPartners,
+  COMPANY_ADDRESS,
+  COMPANY_NAME,
   faqs,
-  features,
-  heroContent,
   integrations,
-  pricingRows,
+  navItems,
+  OPERATOR_NAME,
+  SITE_URL,
   steps,
   testimonials,
-  trustStats,
-} from "../utils/siteContent";
+  trustLogos,
+} from "../data/landingContent";
+import { calculateShippingEstimate, validateShippingEstimate } from "../utils/shippingCalculator";
 
-const initialForm = {
-  packageWeight: "",
-  pickupPincode: "",
-  deliveryPincode: "",
-};
+function formatWeight(value) {
+  return value.toFixed(2).replace(/\.00$/, "").replace(/(\.\d)0$/, "$1");
+}
 
-const RUPEE = "\u20B9";
-
-function Reveal({ children, className = "", delay = 0 }) {
-  const reduceMotion = useReducedMotion();
-
+function Header({ interactiveMotion }) {
   return (
-    <Motion.div
-      className={className}
-      initial={reduceMotion ? false : { opacity: 0, y: 28 }}
-      transition={reduceMotion ? undefined : { duration: 0.6, delay, ease: [0.22, 1, 0.36, 1] }}
-      viewport={{ once: true, amount: 0.2 }}
-      whileInView={reduceMotion ? undefined : { opacity: 1, y: 0 }}
-    >
-      {children}
-    </Motion.div>
+    <header className="fixed top-0 z-50 w-full bg-white/70 backdrop-blur-xl shadow-sm">
+      <div className="relative mx-auto flex h-20 max-w-screen-2xl items-center justify-between px-6 sm:px-8">
+        <div className="font-headline text-2xl font-black uppercase tracking-tighter text-slate-900">
+          {COMPANY_NAME}
+        </div>
+
+        <nav className="hidden items-center gap-8 md:flex">
+          {navItems.map((item, index) => (
+            <a
+              key={item.label}
+              className={`font-headline font-bold tracking-tight transition-colors ${
+                index === 0 ? "border-b-2 border-red-600 pb-1 text-red-600" : "text-slate-600 hover:text-slate-900"
+              }`}
+              href={item.href}
+            >
+              {item.label}
+            </a>
+          ))}
+        </nav>
+
+        <Motion.a
+          {...interactiveMotion}
+          className="kinetic-gradient rounded-xl px-6 py-2 font-bold text-on-primary"
+          href={SITE_URL}
+          rel="noreferrer"
+          target="_blank"
+        >
+          Get Started
+        </Motion.a>
+
+        <div className="absolute bottom-0 left-0 h-px w-full bg-slate-100" />
+      </div>
+    </header>
   );
 }
 
-function SectionIntro({ label, title, description, align = "left", dark = false }) {
-  return (
-    <Reveal className={align === "center" ? "mx-auto max-w-3xl text-center" : "max-w-3xl"}>
-      <Chip
-        label={label}
-        sx={{
-          backgroundColor: dark ? "rgba(255, 94, 20, 0.16)" : "rgba(255, 94, 20, 0.12)",
-          borderRadius: "999px",
-          color: dark ? "#ffd3c0" : "#d94b08",
-          fontFamily: '"Montserrat", sans-serif',
-          fontSize: "0.7rem",
-          fontWeight: 700,
-          letterSpacing: "0.24em",
-          paddingInline: "0.35rem",
-          textTransform: "uppercase",
-        }}
-      />
-      <Typography className={`section-title mt-4 ${dark ? "!text-white" : ""}`} component="h2">
-        {title}
-      </Typography>
-      {description ? (
-        <Typography className={`section-copy mt-5 ${dark ? "!text-white/72" : ""}`} component="p">
-          {description}
-        </Typography>
-      ) : null}
-    </Reveal>
-  );
-}
-
-function HomePage() {
-  const [shippingForm, setShippingForm] = useState(initialForm);
-  const heroRef = useRef(null);
+function Hero({
+  estimateError,
+  estimateForm,
+  estimateResult,
+  handleEstimateSubmit,
+  handleTrackSubmit,
+  interactiveMotion,
+  setTrackingNumber,
+  trackingNumber,
+  updateEstimateField,
+}) {
   const reduceMotion = useReducedMotion();
-  const estimate = useMemo(() => calculateShippingEstimate(shippingForm), [shippingForm]);
-  const { scrollYProgress } = useScroll({
-    target: heroRef,
-    offset: ["start start", "end start"],
-  });
-
-  const heroScale = useTransform(scrollYProgress, [0, 1], [1, 0.84]);
-  const heroOpacity = useTransform(scrollYProgress, [0, 0.6, 1], [1, 0.92, 0.22]);
-  const heroY = useTransform(scrollYProgress, [0, 1], [0, -120]);
-  const heroImageY = useTransform(scrollYProgress, [0, 1], [0, -70]);
-
-  const marketAverage = estimate.estimatedCost ? estimate.estimatedCost + 28 : 164;
-  const camplarRate = estimate.estimatedCost || 136;
-  const savings = marketAverage - camplarRate;
-
-  const handleFieldChange = (key) => (event) => {
-    setShippingForm((current) => ({
-      ...current,
-      [key]: event.target.value,
-    }));
-  };
-
-  const scrollToCalculator = () => {
-    document
-      .getElementById("rate-calculator")
-      ?.scrollIntoView({ behavior: "smooth", block: "start" });
-  };
-
-  const heroMotionStyle = reduceMotion
-    ? undefined
-    : { scale: heroScale, opacity: heroOpacity, y: heroY, transformOrigin: "top center" };
-
-  const heroImageStyle = reduceMotion ? undefined : { y: heroImageY };
 
   return (
-    <div className="site-shell">
-      <SiteHeader onPrimaryAction={scrollToCalculator} />
+    <section className="relative flex min-h-[921px] items-center overflow-hidden px-6 py-24 sm:px-8">
+      <div className="absolute right-0 top-0 hidden h-full w-1/3 pointer-events-none opacity-10 lg:block">
+        <img
+          alt="High-speed cargo container ship moving across blue ocean water at dusk."
+          className="h-full w-full object-cover"
+          src="https://lh3.googleusercontent.com/aida-public/AB6AXuDnOFnFt4_qPDU6w-QcYZzAAhSfPd89-6WvLC3rve3kzRe_VhIBASiJEzuYmxSWYmz62cPDYCZhiZp36O32ext9I1Mv6UwQOq5MSVhilV1RruSRERBzjWsAFHDXGA1QSuJxv_NyYkkGT9fp21uLGuHtHnKVuWZQ8TkBiALUUEulgzOxUdtk7R50GTcd3LSEaIF6b4razT2dla0aWvCgkvA466451-reSIlvVfxQPUXE9Sd0PBVgEeB-omHUipteKBKBST_FMNi2KEQ"
+        />
+      </div>
 
-      <main>
-        <section className="hero-gradient border-b border-[#d7edff]" id="hero" ref={heroRef}>
-          <Motion.div
-            className="mx-auto grid max-w-7xl gap-10 px-4 py-20 sm:px-6 lg:grid-cols-[1.08fr_0.92fr] lg:px-8 lg:py-28"
-            style={heroMotionStyle}
+      <div className="mx-auto grid max-w-screen-2xl grid-cols-1 items-center gap-12 lg:grid-cols-12">
+        <Reveal className="z-10 lg:col-span-7">
+          <span className="font-label inline-block rounded-full bg-primary-container px-4 py-1 text-sm font-bold text-on-primary-container">
+            NEXT-GEN LOGISTICS
+          </span>
+
+          <h1 className="font-headline mb-8 text-6xl font-bold leading-[0.9] tracking-tight text-on-surface md:text-8xl">
+            Global Reach.
+            <br />
+            <span className="text-primary italic">Shipping Simplified.</span>
+          </h1>
+
+          <p className="mb-12 max-w-xl text-xl leading-relaxed text-on-surface-variant">
+            Shiplifi is the modern courier aggregation interface from {BRAND_NAME}. Compare rates
+            from leading carriers, automate shipments, and keep every order visible through one
+            editorial-grade workflow.
+          </p>
+
+          <div className="flex flex-wrap gap-4">
+            <Motion.a
+              {...interactiveMotion}
+              className="kinetic-gradient ambient-shadow rounded-xl px-8 py-4 text-lg font-bold text-on-primary"
+              href={SITE_URL}
+              rel="noreferrer"
+              target="_blank"
+            >
+              Start Shipping
+            </Motion.a>
+            <Motion.a
+              {...interactiveMotion}
+              className="rounded-xl bg-surface-container-high px-8 py-4 text-lg font-bold text-on-surface transition-colors hover:bg-surface-container-highest"
+              href="#pricing"
+            >
+              Explore Pricing
+            </Motion.a>
+          </div>
+
+          <form
+            className="ambient-shadow mt-10 flex max-w-2xl flex-col gap-3 rounded-2xl border border-outline-variant/10 bg-surface-container-lowest p-2 sm:flex-row sm:items-center"
+            id="track"
+            onSubmit={handleTrackSubmit}
           >
-            <Reveal className="max-w-3xl" delay={0.05}>
-              <Chip
-                label={heroContent.eyebrow}
-                sx={{
-                  backgroundColor: "rgba(255,255,255,0.12)",
-                  border: "1px solid rgba(255,255,255,0.18)",
-                  borderRadius: "999px",
-                  color: "#ffffff",
-                  fontFamily: '"Montserrat", sans-serif',
-                  fontSize: "0.72rem",
-                  fontWeight: 700,
-                  letterSpacing: "0.22em",
-                  textTransform: "uppercase",
-                }}
+            <div className="flex min-w-0 flex-1 items-center px-4">
+              <Icon className="mr-3 text-outline">package_2</Icon>
+              <input
+                className="w-full border-none bg-transparent p-0 font-medium text-on-surface placeholder:text-outline/60 focus:outline-none"
+                onChange={(event) => setTrackingNumber(event.target.value)}
+                placeholder="Enter tracking number..."
+                type="text"
+                value={trackingNumber}
               />
-              <Typography
-                className="mt-6 font-heading text-5xl leading-[0.94] tracking-[0.02em] text-white sm:text-6xl lg:text-7xl"
-                component="h1"
-              >
-                {heroContent.headline}
-              </Typography>
-              <Typography className="mt-6 max-w-2xl text-lg leading-8 text-white/82" component="p">
-                {heroContent.subtext}
-              </Typography>
+            </div>
+            <Motion.button
+              {...interactiveMotion}
+              className="rounded-xl bg-on-surface px-8 py-3 font-headline font-bold tracking-tight text-surface transition-colors hover:bg-primary"
+              type="submit"
+            >
+              Track Shipment
+            </Motion.button>
+          </form>
+        </Reveal>
 
-              <div className="mt-8 flex flex-col gap-3 sm:flex-row">
-                <button className="cta-button" onClick={scrollToCalculator} type="button">
-                  {heroContent.primaryCta}
-                </button>
-                <Link className="outline-button outline-button--dark" to="/contact">
-                  {heroContent.secondaryCta}
-                </Link>
+        <Reveal className="relative lg:col-span-5" delay={0.08}>
+          <div className="absolute -right-24 -top-24 -z-10 h-96 w-96 rounded-full bg-primary-container/20 blur-[100px]" />
+          <Motion.form
+            className="glass-panel ambient-shadow rounded-[2rem] border border-white/20 p-8"
+            id="pricing"
+            onSubmit={handleEstimateSubmit}
+            {...(reduceMotion ? {} : { whileHover: { y: -4 } })}
+          >
+            <div className="mb-6 flex flex-wrap items-start justify-between gap-4">
+              <div>
+                <h3 className="font-headline text-2xl font-bold">Estimate Shipping</h3>
+                <p className="mt-2 text-sm text-on-surface-variant">
+                  Compare actual weight with volumetric weight before you ship.
+                </p>
+              </div>
+              <div className="rounded-full bg-primary/10 px-4 py-2 text-xs font-bold uppercase tracking-[0.18em] text-primary">
+                {estimateForm.type === "Express" ? "5000 divisor" : "6000 divisor"}
+              </div>
+            </div>
+
+            <div className="space-y-6">
+              <label className="block">
+                <span className="mb-2 block text-sm font-bold text-on-surface-variant">PICKUP PINCODE</span>
+                <input
+                  className="w-full rounded-xl border-none bg-surface-container-high p-4 focus:outline-none focus:ring-2 focus:ring-primary/20"
+                  inputMode="numeric"
+                  maxLength={6}
+                  onChange={updateEstimateField("pickup")}
+                  placeholder="e.g. 110001"
+                  type="text"
+                  value={estimateForm.pickup}
+                />
+              </label>
+
+              <label className="block">
+                <span className="mb-2 block text-sm font-bold text-on-surface-variant">DELIVERY PINCODE</span>
+                <input
+                  className="w-full rounded-xl border-none bg-surface-container-high p-4 focus:outline-none focus:ring-2 focus:ring-primary/20"
+                  inputMode="numeric"
+                  maxLength={6}
+                  onChange={updateEstimateField("delivery")}
+                  placeholder="e.g. 400001"
+                  type="text"
+                  value={estimateForm.delivery}
+                />
+              </label>
+
+              <div className="grid grid-cols-2 gap-4">
+                <label className="block">
+                  <span className="mb-2 block text-sm font-bold text-on-surface-variant">WEIGHT (KG)</span>
+                <input
+                  className="w-full rounded-xl border-none bg-surface-container-high p-4 focus:outline-none focus:ring-2 focus:ring-primary/20"
+                  min="0.1"
+                  onChange={updateEstimateField("weight")}
+                  placeholder="0.5"
+                  step="0.01"
+                  type="number"
+                  value={estimateForm.weight}
+                />
+                </label>
+
+                <label className="block">
+                  <span className="mb-2 block text-sm font-bold text-on-surface-variant">TYPE</span>
+                  <select
+                    className="w-full appearance-none rounded-xl border-none bg-surface-container-high p-4 focus:outline-none focus:ring-2 focus:ring-primary/20"
+                    onChange={updateEstimateField("type")}
+                    value={estimateForm.type}
+                  >
+                    <option>Express</option>
+                    <option>Standard</option>
+                  </select>
+                </label>
               </div>
 
-              <div className="mt-10 grid gap-4 sm:grid-cols-3">
-                {heroContent.stats.map((item, index) => (
-                  <Reveal key={item.label} delay={0.12 + index * 0.06}>
-                    <div className="dark-card p-5">
-                      <Typography className="font-heading text-3xl tracking-[0.08em] text-white" component="p">
-                        {item.value}
-                      </Typography>
-                      <Typography className="mt-2 text-sm leading-6 text-white/72" component="p">
-                        {item.label}
-                      </Typography>
+              <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
+                <label className="block">
+                  <span className="mb-2 block text-sm font-bold text-on-surface-variant">LENGTH (CM)</span>
+                  <input
+                    className="w-full rounded-xl border-none bg-surface-container-high p-4 focus:outline-none focus:ring-2 focus:ring-primary/20"
+                    min="1"
+                    step="0.1"
+                    onChange={updateEstimateField("length")}
+                    placeholder="30"
+                    type="number"
+                    value={estimateForm.length}
+                  />
+                </label>
+
+                <label className="block">
+                  <span className="mb-2 block text-sm font-bold text-on-surface-variant">WIDTH (CM)</span>
+                  <input
+                    className="w-full rounded-xl border-none bg-surface-container-high p-4 focus:outline-none focus:ring-2 focus:ring-primary/20"
+                    min="1"
+                    step="0.1"
+                    onChange={updateEstimateField("width")}
+                    placeholder="24"
+                    type="number"
+                    value={estimateForm.width}
+                  />
+                </label>
+
+                <label className="block">
+                  <span className="mb-2 block text-sm font-bold text-on-surface-variant">HEIGHT (CM)</span>
+                  <input
+                    className="w-full rounded-xl border-none bg-surface-container-high p-4 focus:outline-none focus:ring-2 focus:ring-primary/20"
+                    min="1"
+                    step="0.1"
+                    onChange={updateEstimateField("height")}
+                    placeholder="18"
+                    type="number"
+                    value={estimateForm.height}
+                  />
+                </label>
+              </div>
+
+              <p className="text-xs leading-6 text-on-surface-variant">
+                Volumetric weight = (Length x Width x Height) / divisor. Dimensions are measured in
+                centimeters.
+              </p>
+
+              {estimateError ? (
+                <div
+                  aria-live="polite"
+                  className="rounded-2xl border border-red-200 bg-red-50 px-4 py-3 text-sm font-medium text-red-700"
+                >
+                  {estimateError}
+                </div>
+              ) : null}
+
+              {estimateResult ? (
+                <div aria-live="polite" className="rounded-[1.5rem] bg-surface-container-high p-5">
+                  <div className="grid grid-cols-1 gap-3 sm:grid-cols-3">
+                    <div className="rounded-2xl bg-white px-4 py-4">
+                      <div className="text-xs font-bold uppercase tracking-[0.18em] text-on-surface-variant">
+                        Actual weight
+                      </div>
+                      <div className="mt-2 text-2xl font-bold text-on-surface">
+                        {formatWeight(estimateResult.actualWeight)} kg
+                      </div>
+                    </div>
+                    <div className="rounded-2xl bg-white px-4 py-4">
+                      <div className="text-xs font-bold uppercase tracking-[0.18em] text-on-surface-variant">
+                        Volumetric weight
+                      </div>
+                      <div className="mt-2 text-2xl font-bold text-on-surface">
+                        {formatWeight(estimateResult.volumetricWeight)} kg
+                      </div>
+                    </div>
+                    <div className="rounded-2xl bg-primary px-4 py-4 text-on-primary">
+                      <div className="text-xs font-bold uppercase tracking-[0.18em] text-on-primary/70">
+                        Billable weight
+                      </div>
+                      <div className="mt-2 text-2xl font-bold">
+                        {formatWeight(estimateResult.billableWeight)} kg
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="mt-4 rounded-2xl bg-white px-4 py-4">
+                    <div className="flex flex-wrap items-center justify-between gap-3">
+                      <div>
+                        <div className="text-xs font-bold uppercase tracking-[0.18em] text-on-surface-variant">
+                          Estimated {estimateForm.type.toLowerCase()} rate
+                        </div>
+                        <div className="mt-2 text-3xl font-bold text-on-surface">
+                          Rs. {estimateResult.estimatedCost}
+                        </div>
+                      </div>
+                      <div className="rounded-full bg-primary/10 px-4 py-2 text-sm font-bold text-primary">
+                        {estimateResult.zoneLabel}
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              ) : null}
+
+              <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
+                <Motion.button
+                  {...interactiveMotion}
+                  className="w-full rounded-xl bg-on-surface py-4 font-bold text-surface transition-colors hover:bg-on-surface-variant"
+                  type="submit"
+                >
+                  Calculate Rates
+                </Motion.button>
+                <Motion.a
+                  {...interactiveMotion}
+                  className="flex items-center justify-center rounded-xl bg-primary py-4 font-bold text-on-primary transition-colors hover:bg-primary/90"
+                  href={SITE_URL}
+                  rel="noreferrer"
+                  target="_blank"
+                >
+                  Get Started
+                </Motion.a>
+              </div>
+            </div>
+          </Motion.form>
+        </Reveal>
+      </div>
+    </section>
+  );
+}
+
+function Footer() {
+  return (
+    <footer className="w-full border-t border-slate-200 bg-slate-50">
+      <div className="mx-auto grid max-w-screen-2xl grid-cols-1 gap-12 px-6 py-16 md:grid-cols-4 sm:px-8">
+        <div className="col-span-1">
+          <div className="font-headline mb-6 text-xl font-bold uppercase text-slate-900">{COMPANY_NAME}</div>
+          <p className="mb-6 text-sm text-slate-500">
+            Shipping Simplified for modern teams that want cleaner dispatch, stronger rates, and a
+            sharper logistics experience.
+          </p>
+          <div className="flex gap-4">
+            <a href={SITE_URL} rel="noreferrer" target="_blank">
+              <Icon className="cursor-pointer text-slate-400 transition-colors hover:text-red-600">public</Icon>
+            </a>
+            <a href={SITE_URL} rel="noreferrer" target="_blank">
+              <Icon className="cursor-pointer text-slate-400 transition-colors hover:text-red-600">language</Icon>
+            </a>
+            <a href="#track">
+              <Icon className="cursor-pointer text-slate-400 transition-colors hover:text-red-600">local_shipping</Icon>
+            </a>
+          </div>
+        </div>
+
+        <div>
+          <h5 className="mb-6 text-sm font-bold uppercase tracking-widest text-slate-900">Platform</h5>
+          <ul className="space-y-4 text-sm text-slate-500">
+            <li><a className="transition-all hover:text-red-600 hover:underline" href="#services">Services</a></li>
+            <li><a className="transition-all hover:text-red-600 hover:underline" href="#pricing">Pricing</a></li>
+            <li><a className="transition-all hover:text-red-600 hover:underline" href="#track">Live Track</a></li>
+          </ul>
+        </div>
+
+        <div>
+          <h5 className="mb-6 text-sm font-bold uppercase tracking-widest text-slate-900">Company</h5>
+          <ul className="space-y-4 text-sm text-slate-500">
+            <li>{COMPANY_NAME}</li>
+            <li>Brand Name: {BRAND_NAME}</li>
+            <li>{OPERATOR_NAME}</li>
+          </ul>
+        </div>
+
+        <div>
+          <h5 className="mb-6 text-sm font-bold uppercase tracking-widest text-slate-900">Contact</h5>
+          <ul className="space-y-4 text-sm text-slate-500">
+            <li>
+              <a className="transition-all hover:text-red-600 hover:underline" href={SITE_URL} rel="noreferrer" target="_blank">
+                www.shiplifi.com
+              </a>
+            </li>
+            <li>{COMPANY_ADDRESS}</li>
+          </ul>
+        </div>
+      </div>
+
+      <div className="mx-auto max-w-screen-2xl border-t border-slate-200 px-6 py-8 sm:px-8">
+        <p className="text-center text-sm text-slate-500">
+          &copy; {new Date().getFullYear()} {COMPANY_NAME}. All rights reserved.
+        </p>
+      </div>
+    </footer>
+  );
+}
+
+export default function HomePage() {
+  const reduceMotion = useReducedMotion();
+  const [activeFaq, setActiveFaq] = useState(0);
+  const [trackingNumber, setTrackingNumber] = useState("");
+  const [estimateForm, setEstimateForm] = useState({
+    pickup: "",
+    delivery: "",
+    weight: "",
+    length: "",
+    width: "",
+    height: "",
+    type: "Express",
+  });
+  const [estimateError, setEstimateError] = useState("");
+  const [estimateResult, setEstimateResult] = useState(null);
+
+  const interactiveMotion = reduceMotion ? {} : { whileHover: { y: -2, scale: 1.01 }, whileTap: { scale: 0.985 } };
+
+  const openWebsite = () => {
+    if (typeof window !== "undefined") {
+      window.open(SITE_URL, "_blank", "noopener,noreferrer");
+    }
+  };
+
+  const updateEstimateField = (field) => (event) => {
+    setEstimateError("");
+    setEstimateResult(null);
+    setEstimateForm((current) => ({ ...current, [field]: event.target.value }));
+  };
+
+  const handleEstimateSubmit = (event) => {
+    event.preventDefault();
+
+    const validationMessage = validateShippingEstimate(estimateForm);
+    if (validationMessage) {
+      setEstimateResult(null);
+      setEstimateError(validationMessage);
+      return;
+    }
+
+    setEstimateError("");
+    setEstimateResult(calculateShippingEstimate(estimateForm));
+  };
+
+  return (
+    <div className="bg-background text-on-surface font-body selection:bg-primary-container selection:text-on-primary-container">
+      <Header interactiveMotion={interactiveMotion} />
+
+      <main className="pt-20">
+        <Hero
+          estimateError={estimateError}
+          estimateForm={estimateForm}
+          estimateResult={estimateResult}
+          handleEstimateSubmit={handleEstimateSubmit}
+          handleTrackSubmit={(event) => { event.preventDefault(); openWebsite(); }}
+          interactiveMotion={interactiveMotion}
+          setTrackingNumber={setTrackingNumber}
+          trackingNumber={trackingNumber}
+          updateEstimateField={updateEstimateField}
+        />
+
+        <section className="bg-surface-container-low px-6 py-24 sm:px-8">
+          <Reveal className="mx-auto flex max-w-screen-2xl flex-col items-center justify-between gap-12 md:flex-row">
+            <div className="flex items-baseline gap-12">
+              <div>
+                <div className="font-headline text-5xl font-bold text-primary">99.8%</div>
+                <div className="mt-2 text-sm font-bold uppercase tracking-widest text-on-surface-variant">Precision Delivery</div>
+              </div>
+              <div className="hidden h-16 w-px bg-outline-variant/30 md:block" />
+              <div>
+                <div className="font-headline text-5xl font-bold text-on-surface">220+</div>
+                <div className="mt-2 text-sm font-bold uppercase tracking-widest text-on-surface-variant">Global Countries</div>
+              </div>
+            </div>
+
+            <div className="flex flex-wrap justify-center gap-12 opacity-50 grayscale transition-all duration-700 hover:grayscale-0">
+              {trustLogos.map((logo, index) => (
+                <Reveal key={logo} delay={0.05 + index * 0.04}>
+                  <img alt={`Partner logo ${index + 1}`} className="h-8" src={logo} />
+                </Reveal>
+              ))}
+            </div>
+          </Reveal>
+        </section>
+
+        <section className="overflow-hidden px-6 py-32 sm:px-8" id="services">
+          <div className="mx-auto max-w-screen-2xl">
+            <Reveal><h2 className="font-headline mb-20 text-5xl font-bold">Velocity in <span className="text-primary-container">4 Steps.</span></h2></Reveal>
+            <div className="grid grid-cols-1 gap-12 md:grid-cols-4">
+              {steps.map((step, index) => (
+                <Reveal key={step.title} delay={index * 0.06}>
+                  <div className="group relative">
+                    <div className="font-headline absolute -left-6 -top-12 text-9xl font-black text-surface-container opacity-20 transition-colors group-hover:text-primary-container">{step.number}</div>
+                    <div className="relative z-10">
+                      <Icon className="mb-6 text-4xl text-primary">{step.icon}</Icon>
+                      <h4 className="mb-4 text-2xl font-bold">{step.title}</h4>
+                      <p className="text-on-surface-variant">{step.description}</p>
+                    </div>
+                  </div>
+                </Reveal>
+              ))}
+            </div>
+          </div>
+        </section>
+
+        <section className="bg-surface px-6 py-32 sm:px-8">
+          <div className="mx-auto max-w-screen-2xl">
+            <div className="grid grid-cols-1 gap-8 md:grid-cols-3">
+              <Reveal className="group relative overflow-hidden rounded-[2rem] bg-on-surface p-12 text-surface md:col-span-2">
+                <div className="relative z-10 max-w-md">
+                  <h3 className="font-headline mb-6 text-4xl font-bold">Real-Time Rate Comparison</h3>
+                  <p className="text-lg leading-relaxed text-surface-variant">Stop overpaying. Our kinetic engine scouts top carriers to find the fastest and cheapest routes for every single parcel.</p>
+                </div>
+                <img alt="Dynamic logistic pricing charts on a dark glass background." className="absolute bottom-0 right-0 h-2/3 w-2/3 rounded-tl-[3rem] object-cover opacity-30 transition-opacity group-hover:opacity-50" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBHIE7j92lI-b9b_5tV8GUiwAb11MtV4zDzipRBxmv0WWBCRUAoOnKfeUMGnExoFHpfX7b0O4yeL32gA5zkMZGydDQ44SnuCrI1qfZ78p8q11Rxb0dPpXBKa7cwqKDEBt5EFF_MZLv-ctabJLscD9CWfgxCtbVUfTXe-8APf0CQ5HpJC-DgWpgAcgvcxCX3BpNSJX8p6MHu6iVZqrzLHAsDtTLZCHMU6TVao3CTPc32jD4KyopW_UHpYSyFGPK9s57NhP0sxcyj7_M" />
+              </Reveal>
+
+              <Reveal className="flex flex-col justify-between rounded-[2rem] bg-surface-container-high p-12" delay={0.06}>
+                <div>
+                  <Icon className="mb-8 text-5xl text-primary" filled>location_on</Icon>
+                  <h3 className="font-headline mb-4 text-3xl font-bold">Hyper-Tracking</h3>
+                  <p className="text-on-surface-variant">Unified tracking for every carrier. Send automated updates and keep buyers fully informed.</p>
+                </div>
+              </Reveal>
+
+              <Reveal className="ambient-shadow rounded-[2rem] bg-white p-12" delay={0.08}>
+                <h3 className="font-headline mb-4 text-3xl font-bold">COD &amp; NDR</h3>
+                <p className="mb-8 text-on-surface-variant">Early COD remittance and faster non-delivery resolution to reduce friction and protect margins.</p>
+                <div className="flex items-center gap-4 font-bold text-tertiary"><Icon>check_circle</Icon><span>3-Day Remittance Cycle</span></div>
+              </Reveal>
+
+              <Reveal className="flex items-center gap-12 rounded-[2rem] bg-primary-container p-12 text-on-primary-container md:col-span-2" delay={0.12}>
+                <div className="max-w-lg">
+                  <h3 className="font-headline mb-6 text-4xl font-bold">Robust API Integration</h3>
+                  <p className="text-lg text-on-primary-fixed-variant">Built for developers. Connect your ERP or storefront with clean, high-performance REST APIs in minutes.</p>
+                  <Motion.a {...interactiveMotion} className="mt-8 inline-flex rounded-xl bg-on-primary-container px-6 py-3 font-bold text-on-primary" href={SITE_URL} rel="noreferrer" target="_blank">View Documentation</Motion.a>
+                </div>
+                <div className="hidden flex-1 md:block"><div className="rounded-xl bg-on-primary-container/10 p-4 font-mono text-sm text-on-primary-fixed-variant"><code>POST /v1/shipments/create</code></div></div>
+              </Reveal>
+            </div>
+          </div>
+        </section>
+
+        <section className="border-y border-outline-variant/10 px-6 py-24 sm:px-8">
+          <div className="mx-auto max-w-screen-2xl text-center">
+            <Reveal><p className="font-label mb-12 text-xs font-bold uppercase tracking-[0.2em] text-on-surface-variant">Connected with the World&apos;s Best</p></Reveal>
+            <div className="flex flex-wrap items-center justify-center gap-16 opacity-60 md:gap-24">
+              {carrierPartners.map((partner, index) => (
+                <Reveal key={partner} delay={0.04 + index * 0.03}><span className="font-headline text-3xl font-black italic">{partner}</span></Reveal>
+              ))}
+            </div>
+          </div>
+        </section>
+
+        <section className="bg-surface-container-lowest px-6 py-32 sm:px-8">
+          <div className="mx-auto grid max-w-screen-2xl grid-cols-1 items-center gap-24 lg:grid-cols-2">
+            <Reveal>
+              <h2 className="font-headline mb-8 text-5xl font-bold">Cut Costs, Not <span className="text-primary">Corners.</span></h2>
+              <p className="mb-12 text-xl text-on-surface-variant">Aggregated volumes mean pre-negotiated rates that smaller businesses could never get on their own. Save more on every shipment.</p>
+              <div className="space-y-4">
+                <div className="flex items-center justify-between rounded-2xl bg-surface-container p-6"><span className="font-bold">Traditional Single Carrier</span><span className="text-on-surface-variant">Rs. 12.50 / avg</span></div>
+                <div className="flex items-center justify-between rounded-2xl border-l-4 border-primary bg-primary/10 p-6"><span className="font-bold text-primary">{COMPANY_NAME} Aggregation</span><span className="font-black text-primary">Rs. 6.80 / avg</span></div>
+              </div>
+              <Motion.a {...interactiveMotion} className="group mt-12 inline-flex items-center gap-2 font-bold text-primary" href={SITE_URL} rel="noreferrer" target="_blank">Try our detailed Cost Calculator<Icon className="transition-transform group-hover:translate-x-2">arrow_forward</Icon></Motion.a>
+            </Reveal>
+
+            <Reveal className="relative" delay={0.08}>
+              <div className="kinetic-gradient absolute inset-0 -z-10 rotate-3 rounded-[3rem]" />
+              <img alt="Clean logistics pricing and savings charts." className="ambient-shadow w-full rounded-[2.5rem]" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBXNF_PXEOHe4kcYVDs8IJbLaeXMN8_0hIpc0OJl3rE0wdez7VtFc7ctUQnI-5XNaA5yHE0ZF4g2bg3zekF6MrMEQ0X7EyToaYqJ30XCb4lZ7Tv2QE6NuqhwRpEepm_X1fnkfj6EUvrKXNqYIdkEq-47ue_dqtCGXVjBi49HdcKxrr6ymDFI5PDWOsYXHWRCQ9DtvxpPBJ6942vi8-61Q9X9q01o7qd_0xX8Dqnj7Ft_pTPb6VR3KodL04X8PcYT1CtOSehZir2jpE" />
+            </Reveal>
+          </div>
+        </section>
+
+        <section className="bg-white px-6 py-24 sm:px-8">
+          <div className="mx-auto max-w-screen-2xl">
+            <div className="flex flex-col items-center justify-between gap-12 md:flex-row">
+              <Reveal className="max-w-sm"><h3 className="font-headline mb-4 text-3xl font-bold">Native Store Sync</h3><p className="text-on-surface-variant">Connect your existing workflow with one-click integrations for the most popular commerce platforms.</p></Reveal>
+              <div className="flex flex-wrap items-center justify-center gap-12">
+                {integrations.map((integration, index) => (
+                  <Reveal key={integration.name} delay={0.05 + index * 0.04}>
+                    <div className="flex h-24 w-24 items-center justify-center rounded-3xl bg-surface-container transition-transform hover:scale-110">
+                      <img alt={integration.name} className="h-12 w-12" src={integration.src} />
                     </div>
                   </Reveal>
                 ))}
               </div>
-            </Reveal>
-
-            <Motion.div className="grid gap-5" style={heroImageStyle}>
-              <Reveal delay={0.08}>
-                <div className="surface-card overflow-hidden p-2">
-                  <div className="relative overflow-hidden rounded-[1rem] border border-black/5 bg-slate-950">
-                    <img
-                      alt="Camplar logistics operations"
-                      className="h-[360px] w-full object-cover opacity-90 sm:h-[420px]"
-                      loading="eager"
-                      src={heroContent.image}
-                    />
-                    <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-[#001d67] via-[#001d67]/70 to-transparent p-6 text-white">
-                      <Typography className="text-xs font-semibold uppercase tracking-[0.26em] text-[#ffd7c3]" component="p">
-                        Smart fulfilment visibility
-                      </Typography>
-                      <Typography className="mt-3 max-w-sm text-sm leading-7 text-white/82" component="p">
-                        Compare partners, protect margins, and keep every shipment visible from pickup
-                        through final delivery.
-                      </Typography>
-                    </div>
-                  </div>
-                </div>
-              </Reveal>
-
-              <Reveal delay={0.14}>
-                <div className="surface-card p-6" id="rate-calculator">
-                  <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
-                    <div>
-                      <Chip
-                        label="Rate calculator"
-                        sx={{
-                          backgroundColor: "rgba(255, 94, 20, 0.12)",
-                          borderRadius: "999px",
-                          color: "#d94b08",
-                          fontFamily: '"Montserrat", sans-serif',
-                          fontSize: "0.68rem",
-                          fontWeight: 700,
-                          letterSpacing: "0.2em",
-                          textTransform: "uppercase",
-                        }}
-                      />
-                      <Typography className="mt-3 font-heading text-3xl tracking-[0.05em] text-slate-950" component="h2">
-                        Quote a lane in seconds
-                      </Typography>
-                    </div>
-                    <Chip
-                      label="Functional utility"
-                      sx={{
-                        backgroundColor: "rgba(215, 237, 255, 0.85)",
-                        borderRadius: "999px",
-                        color: "#5b7d9a",
-                        fontFamily: '"Montserrat", sans-serif',
-                        fontSize: "0.68rem",
-                        fontWeight: 700,
-                        letterSpacing: "0.18em",
-                        textTransform: "uppercase",
-                      }}
-                    />
-                  </div>
-
-                  <div className="mt-6 grid gap-4 md:grid-cols-3">
-                    <label className="form-field">
-                      <span>Package weight (kg)</span>
-                      <input
-                        onChange={handleFieldChange("packageWeight")}
-                        placeholder="0.5"
-                        type="number"
-                        value={shippingForm.packageWeight}
-                      />
-                    </label>
-                    <label className="form-field">
-                      <span>Pickup pincode</span>
-                      <input
-                        inputMode="numeric"
-                        maxLength={6}
-                        onChange={handleFieldChange("pickupPincode")}
-                        placeholder="380058"
-                        value={shippingForm.pickupPincode}
-                      />
-                    </label>
-                    <label className="form-field">
-                      <span>Delivery pincode</span>
-                      <input
-                        inputMode="numeric"
-                        maxLength={6}
-                        onChange={handleFieldChange("deliveryPincode")}
-                        placeholder="400001"
-                        value={shippingForm.deliveryPincode}
-                      />
-                    </label>
-                  </div>
-
-                  <div className="mt-6 grid gap-4 md:grid-cols-3">
-                    <div className="result-card">
-                      <p className="text-xs font-semibold uppercase tracking-[0.22em] text-slate-500">
-                        Estimated cost
-                      </p>
-                      <p className="mt-3 font-heading text-4xl tracking-[0.08em] text-slate-950">
-                        {estimate.estimatedCost ? `${RUPEE}${estimate.estimatedCost}` : "--"}
-                      </p>
-                    </div>
-                    <div className="result-card">
-                      <p className="text-xs font-semibold uppercase tracking-[0.22em] text-slate-500">
-                        Shipping zone
-                      </p>
-                      <p className="mt-3 font-heading text-4xl tracking-[0.08em] text-slate-950">
-                        {estimate.zoneLabel}
-                      </p>
-                    </div>
-                    <div className="result-card">
-                      <p className="text-xs font-semibold uppercase tracking-[0.22em] text-slate-500">
-                        Expected ETA
-                      </p>
-                      <p className="mt-3 font-heading text-4xl tracking-[0.08em] text-slate-950">
-                        {estimate.eta}
-                      </p>
-                    </div>
-                  </div>
-                </div>
-              </Reveal>
-            </Motion.div>
-          </Motion.div>
-        </section>
-
-        <section className="section-frame" id="trust">
-          <div className="mx-auto max-w-7xl px-4 py-16 sm:px-6 lg:px-8">
-            <SectionIntro
-              align="center"
-              description="Built for fast-moving teams that care about courier performance, shipping economics, and dependable delivery operations."
-              label="Trust"
-              title="Proof points that help teams ship with confidence"
-            />
-
-            <div className="mt-10 grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
-              {trustStats.map((item, index) => (
-                <Reveal key={item.label} delay={index * 0.05}>
-                  <div className="surface-card p-6">
-                    <Typography className="font-heading text-4xl tracking-[0.08em] text-slate-950" component="p">
-                      {item.value}
-                    </Typography>
-                    <Typography className="mt-3 text-sm leading-7 text-slate-500" component="p">
-                      {item.label}
-                    </Typography>
-                  </div>
-                </Reveal>
-              ))}
-            </div>
-
-            <Reveal className="mt-10">
-              <div className="rounded-[1rem] border border-slate-200 bg-white p-6 shadow-[0_18px_48px_rgba(0,29,103,0.06)]">
-                <div className="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
-                  <div>
-                    <Chip
-                      label="Client logos"
-                      sx={{
-                        backgroundColor: "rgba(255, 94, 20, 0.12)",
-                        borderRadius: "999px",
-                        color: "#d94b08",
-                        fontFamily: '"Montserrat", sans-serif',
-                        fontSize: "0.68rem",
-                        fontWeight: 700,
-                        letterSpacing: "0.2em",
-                        textTransform: "uppercase",
-                      }}
-                    />
-                    <Typography className="mt-3 font-heading text-3xl tracking-[0.05em] text-slate-950" component="h3">
-                      Teams we are built to support
-                    </Typography>
-                  </div>
-                  <Typography className="max-w-xl text-sm leading-7 text-slate-500" component="p">
-                    CAMPLAR fits D2C brands, marketplaces, distributors, and operations-heavy teams
-                    that need cleaner shipping decisions.
-                  </Typography>
-                </div>
-                <div className="mt-8 grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
-                  {clientLogos.map((item, index) => (
-                    <Reveal key={item.name} delay={0.08 + index * 0.04}>
-                      <div
-                        className={`rounded-[1rem] border border-slate-200 bg-gradient-to-br ${item.accent} p-5`}
-                      >
-                        <div className="flex items-center gap-4">
-                          <div className="grid h-12 w-12 place-items-center rounded-2xl bg-white font-heading text-xl tracking-[0.12em] text-slate-950 shadow-sm">
-                            {item.name.slice(0, 2).toUpperCase()}
-                          </div>
-                          <div>
-                            <Typography className="font-heading text-xl tracking-[0.08em] text-slate-950" component="p">
-                              {item.name}
-                            </Typography>
-                            <Typography className="text-sm text-slate-500" component="p">
-                              Operational shipping client
-                            </Typography>
-                          </div>
-                        </div>
-                      </div>
-                    </Reveal>
-                  ))}
-                </div>
-              </div>
-            </Reveal>
-          </div>
-        </section>
-
-        <section className="section-frame section-frame--dark" id="how-it-works">
-          <div className="mx-auto max-w-7xl px-4 py-16 sm:px-6 lg:px-8">
-            <SectionIntro
-              dark
-              description="A clear workflow from onboarding to dispatch so teams can move faster without juggling courier dashboards."
-              label="How it Works"
-              title="Register, add orders, select couriers, and ship without operational clutter"
-            />
-
-            <div className="mt-10 grid gap-5 lg:grid-cols-4">
-              {steps.map((step, index) => (
-                <Reveal key={step.title} delay={index * 0.06}>
-                  <div className="dark-card p-6">
-                    <span className="inline-flex h-12 w-12 items-center justify-center rounded-2xl bg-[#ff5e14]/15 font-heading text-2xl tracking-[0.12em] text-[#ffd3c0]">
-                      {index + 1}
-                    </span>
-                    <Typography className="mt-5 font-heading text-3xl tracking-[0.05em] text-white" component="h3">
-                      {step.title}
-                    </Typography>
-                    <Typography className="mt-4 text-sm leading-7 text-white/70" component="p">
-                      {step.description}
-                    </Typography>
-                  </div>
-                </Reveal>
-              ))}
             </div>
           </div>
         </section>
 
-        <section className="section-frame" id="features">
-          <div className="mx-auto max-w-7xl px-4 py-16 sm:px-6 lg:px-8">
-            <SectionIntro
-              description="Courier aggregators work best when rate comparison, tracking, automation, and integrations live together in one streamlined system."
-              label="Features"
-              title="Everything needed to manage shipping operations from one unified platform"
-            />
-
-            <div className="mt-10 grid gap-5 md:grid-cols-2 xl:grid-cols-5">
-              {features.map((item, index) => (
-                <Reveal key={item.title} delay={index * 0.05}>
-                  <article className="surface-card flex flex-col p-6">
-                    <Chip
-                      label={item.badge}
-                      sx={{
-                        alignSelf: "flex-start",
-                        backgroundColor: "rgba(215, 237, 255, 0.85)",
-                        borderRadius: "999px",
-                        color: "#5b7d9a",
-                        fontFamily: '"Montserrat", sans-serif',
-                        fontSize: "0.68rem",
-                        fontWeight: 700,
-                        letterSpacing: "0.16em",
-                        textTransform: "uppercase",
-                      }}
-                    />
-                    <Typography className="mt-5 font-heading text-2xl tracking-[0.04em] text-slate-950" component="h3">
-                      {item.title}
-                    </Typography>
-                    <Typography className="mt-4 text-sm leading-7 text-slate-500" component="p">
-                      {item.description}
-                    </Typography>
-                  </article>
-                </Reveal>
-              ))}
-            </div>
-          </div>
-        </section>
-
-        <section className="section-frame" id="partners">
-          <div className="mx-auto max-w-7xl px-4 py-16 sm:px-6 lg:px-8">
-            <SectionIntro
-              description="Build a delivery mix around serviceability, delivery promise, and cost performance without splitting your workflow across tools."
-              label="Courier Partners"
-              title="Multiple courier options, one dependable control layer"
-            />
-
-            <div className="mt-10 grid gap-5 md:grid-cols-2 xl:grid-cols-3">
-              {courierPartners.map((partner, index) => (
-                <Reveal key={partner.name} delay={index * 0.04}>
-                  <div className="surface-card p-6">
-                    <div className="flex items-start justify-between gap-4">
-                      <div>
-                        <Typography className="font-heading text-3xl tracking-[0.08em] text-slate-950" component="h3">
-                          {partner.name}
-                        </Typography>
-                        <Typography className="mt-2 text-sm text-slate-500" component="p">
-                          {partner.coverage}
-                        </Typography>
-                      </div>
-                      <span className={`rounded-full px-4 py-2 text-xs font-semibold uppercase tracking-[0.22em] ${partner.accent}`}>
-                        Partner
-                      </span>
-                    </div>
-                    <div className="mt-6 h-2 overflow-hidden rounded-full bg-slate-100">
-                      <div className="h-full w-4/5 rounded-full bg-gradient-to-r from-[#001d67] via-[#ff5e14] to-[#ffd3c0]" />
-                    </div>
-                  </div>
-                </Reveal>
-              ))}
-            </div>
-          </div>
-        </section>
-
-        <section className="section-frame" id="pricing">
-          <div className="mx-auto grid max-w-7xl gap-10 px-4 py-16 sm:px-6 lg:grid-cols-[0.9fr_1.1fr] lg:px-8">
-            <div>
-              <SectionIntro
-                description="Let courier comparison and operational visibility protect your margins. The same quote utility above feeds the pricing view below."
-                label="Pricing Advantage"
-                title="Know where CAMPLAR helps you save on every lane"
-              />
-              <Reveal className="mt-8">
-                <div className="surface-card p-6">
-                  <Typography className="text-xs font-semibold uppercase tracking-[0.24em] text-slate-500" component="p">
-                    Live calculator tie-in
-                  </Typography>
-                  <div className="mt-5 grid gap-4 sm:grid-cols-3">
-                    <div className="rounded-[1rem] bg-slate-50 p-4">
-                      <Typography className="text-xs uppercase tracking-[0.2em] text-slate-500" component="p">
-                        Quoted rate
-                      </Typography>
-                      <Typography className="mt-2 font-heading text-3xl tracking-[0.08em] text-slate-950" component="p">
-                        {RUPEE}
-                        {camplarRate}
-                      </Typography>
-                    </div>
-                    <div className="rounded-[1rem] bg-slate-50 p-4">
-                      <Typography className="text-xs uppercase tracking-[0.2em] text-slate-500" component="p">
-                        Market average
-                      </Typography>
-                      <Typography className="mt-2 font-heading text-3xl tracking-[0.08em] text-slate-950" component="p">
-                        {RUPEE}
-                        {marketAverage}
-                      </Typography>
-                    </div>
-                    <div className="rounded-[1rem] bg-[#001d67] p-4 text-white">
-                      <Typography className="text-xs uppercase tracking-[0.2em] text-white/68" component="p">
-                        Potential savings
-                      </Typography>
-                      <Typography className="mt-2 font-heading text-3xl tracking-[0.08em] text-white" component="p">
-                        {RUPEE}
-                        {savings > 0 ? savings : 0}
-                      </Typography>
-                    </div>
-                  </div>
-                  <button className="mt-6 outline-button" onClick={scrollToCalculator} type="button">
-                    Recalculate rate
-                  </button>
-                </div>
-              </Reveal>
-            </div>
-
-            <Reveal className="surface-card overflow-hidden p-0" delay={0.06}>
-              <div className="border-b border-slate-200 bg-[#001d67] px-6 py-5 text-white">
-                <Typography className="text-xs font-semibold uppercase tracking-[0.24em] text-[#ffd3c0]" component="p">
-                  Savings comparison
-                </Typography>
-                <Typography className="mt-3 font-heading text-3xl tracking-[0.06em]" component="h3">
-                  Compare traditional booking to smart aggregation
-                </Typography>
-              </div>
-              <div className="overflow-x-auto p-6">
-                <table className="w-full min-w-[34rem] text-left">
-                  <thead>
-                    <tr className="text-xs uppercase tracking-[0.22em] text-slate-500">
-                      <th className="pb-4">Lane</th>
-                      <th className="pb-4">Traditional</th>
-                      <th className="pb-4">CAMPLAR</th>
-                      <th className="pb-4">Advantage</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {pricingRows.map((row) => (
-                      <tr key={row.lane} className="border-t border-slate-200 text-sm text-slate-600">
-                        <td className="py-5 font-semibold text-slate-950">{row.lane}</td>
-                        <td className="py-5">{RUPEE}{row.legacyRate}</td>
-                        <td className="py-5 font-semibold text-[#ff5e14]">{RUPEE}{row.camplarRate}</td>
-                        <td className="py-5">
-                          <span className="rounded-full bg-emerald-500/10 px-3 py-1.5 text-xs font-semibold uppercase tracking-[0.18em] text-emerald-700">
-                            {row.savings}
-                          </span>
-                        </td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
-              </div>
-            </Reveal>
-          </div>
-        </section>
-
-        <section className="section-frame section-frame--dark" id="dashboard">
-          <div className="mx-auto max-w-7xl px-4 py-16 sm:px-6 lg:px-8">
-            <SectionIntro
-              dark
-              description="A branded dashboard mockup that shows how shipment status, courier performance, and COD visibility can live in one system."
-              label="Dashboard Preview"
-              title="A cleaner command center for order flow, courier mix, and delivery visibility"
-            />
-
-            <div className="mt-10 grid gap-6 lg:grid-cols-[1.15fr_0.85fr]">
-              <Reveal className="dashboard-shell">
-                <div className="dashboard-header">
-                  <div>
-                    <Typography className="text-xs font-semibold uppercase tracking-[0.22em] text-white/60" component="p">
-                      Shipment Control
-                    </Typography>
-                    <Typography className="mt-2 font-heading text-3xl tracking-[0.06em] text-white" component="h3">
-                      CAMPLAR Ops Dashboard
-                    </Typography>
-                  </div>
-                  <Chip
-                    label="Live Preview"
-                    sx={{
-                      backgroundColor: "rgba(255,255,255,0.08)",
-                      borderRadius: "999px",
-                      color: "rgba(255,255,255,0.85)",
-                      fontFamily: '"Montserrat", sans-serif',
-                      fontSize: "0.68rem",
-                      fontWeight: 700,
-                      letterSpacing: "0.16em",
-                      textTransform: "uppercase",
-                    }}
-                  />
-                </div>
-                <div className="grid gap-4 xl:grid-cols-[0.7fr_1.3fr]">
-                  <div className="dashboard-panel">
-                    <p className="dashboard-label">Today&apos;s shipment mix</p>
-                    <div className="mt-5 space-y-4">
-                      {[
-                        ["Delivered", "142"],
-                        ["In Transit", "56"],
-                        ["NDR Pending", "12"],
-                        ["COD Ready", "31"],
-                      ].map(([label, value]) => (
-                        <div key={label}>
-                          <div className="flex items-center justify-between text-sm text-white/72">
-                            <span>{label}</span>
-                            <span className="font-semibold text-white">{value}</span>
-                          </div>
-                          <div className="mt-2 h-2 rounded-full bg-white/8">
-                            <div className="h-full rounded-full bg-gradient-to-r from-[#ff5e14] to-[#ffd3c0]" />
-                          </div>
-                        </div>
-                      ))}
-                    </div>
-                  </div>
-                  <div className="grid gap-4">
-                    <div className="dashboard-panel">
-                      <div className="flex items-center justify-between gap-4">
-                        <p className="dashboard-label">Courier performance snapshot</p>
-                        <p className="text-xs uppercase tracking-[0.18em] text-white/45">Last 7 days</p>
-                      </div>
-                      <div className="mt-6 grid gap-3 sm:grid-cols-3">
-                        {[
-                          ["Avg. cost", `${RUPEE}128`],
-                          ["On-time", "98.4%"],
-                          ["NDR recoveries", "71%"],
-                        ].map(([label, value]) => (
-                          <div key={label} className="rounded-[1rem] border border-white/10 bg-white/5 p-4">
-                            <p className="text-xs uppercase tracking-[0.18em] text-white/45">{label}</p>
-                            <p className="mt-3 font-heading text-3xl tracking-[0.08em] text-white">{value}</p>
-                          </div>
-                        ))}
-                      </div>
-                    </div>
-                    <div className="dashboard-panel">
-                      <p className="dashboard-label">Recent orders</p>
-                      <div className="mt-5 grid gap-3">
-                        {[
-                          ["ORD-10291", "Delhivery", "In Transit"],
-                          ["ORD-10288", "Blue Dart", "Delivered"],
-                          ["ORD-10277", "Xpressbees", "NDR Follow-up"],
-                        ].map(([order, courier, status]) => (
-                          <div
-                            key={order}
-                            className="flex flex-col gap-2 rounded-[1rem] border border-white/10 bg-white/5 px-4 py-3 sm:flex-row sm:items-center sm:justify-between"
-                          >
-                            <div>
-                              <p className="font-semibold text-white">{order}</p>
-                              <p className="text-sm text-white/55">{courier}</p>
-                            </div>
-                            <span className="rounded-full bg-[#ff5e14]/15 px-3 py-1 text-xs uppercase tracking-[0.18em] text-[#ffd3c0]">
-                              {status}
-                            </span>
-                          </div>
-                        ))}
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </Reveal>
-
-              <div className="grid gap-4">
-                <Reveal delay={0.06}>
-                  <div className="dark-card p-6">
-                    <Typography className="section-kicker !text-[#ffd3c0]" component="p">
-                      Built for clarity
-                    </Typography>
-                    <Typography className="mt-3 font-heading text-3xl tracking-[0.05em] text-white" component="h3">
-                      See orders, performance, and payouts without tab overload
-                    </Typography>
-                    <Typography className="mt-4 text-sm leading-7 text-white/72" component="p">
-                      The preview combines delivery operations, courier choice, and financial
-                      visibility into a single operational surface.
-                    </Typography>
-                  </div>
-                </Reveal>
-                <Reveal delay={0.1}>
-                  <div className="dark-card p-6">
-                    <Typography className="section-kicker !text-[#ffd3c0]" component="p">
-                      Utilities carried forward
-                    </Typography>
-                    <ul className="mt-5 grid gap-3 text-sm leading-7 text-white/72">
-                      <li>Rate calculator logic preserved from the repo</li>
-                      <li>Tailwind-first layout strengthened with Material UI interactions</li>
-                      <li>Framer Motion reveal blocks and hero scroll collapse added</li>
-                    </ul>
-                  </div>
-                </Reveal>
-              </div>
-            </div>
-          </div>
-        </section>
-
-        <section className="section-frame" id="integrations">
-          <div className="mx-auto max-w-7xl px-4 py-16 sm:px-6 lg:px-8">
-            <SectionIntro
-              description="Connect order sources and keep fulfilment updates moving back into the systems your team already uses."
-              label="Integrations"
-              title="Commerce integrations that keep order intake and shipping execution aligned"
-            />
-
-            <div className="mt-10 grid gap-5 lg:grid-cols-3">
-              {integrations.map((item, index) => (
-                <Reveal key={item.name} delay={index * 0.05}>
-                  <div className="surface-card p-6">
+        <section className="bg-surface-container-low px-6 py-32 sm:px-8">
+          <div className="mx-auto max-w-screen-2xl">
+            <Reveal><h2 className="font-headline mb-20 text-center text-5xl font-bold">Voices of <span className="text-primary">Scale.</span></h2></Reveal>
+            <div className="grid grid-cols-1 gap-8 md:grid-cols-3">
+              {testimonials.map((testimonial, index) => (
+                <Reveal key={testimonial.name} delay={index * 0.06}>
+                  <div className="ambient-shadow rounded-[2rem] bg-white p-10">
+                    <div className="mb-6 text-6xl leading-none text-primary-container">“</div>
+                    <p className="mb-8 text-lg leading-relaxed italic">{testimonial.quote}</p>
                     <div className="flex items-center gap-4">
-                      <div className="grid h-14 w-14 place-items-center rounded-2xl bg-[#001d67] font-heading text-2xl tracking-[0.1em] text-white">
-                        {item.name.slice(0, 2).toUpperCase()}
-                      </div>
-                      <Typography className="font-heading text-3xl tracking-[0.06em] text-slate-950" component="h3">
-                        {item.name}
-                      </Typography>
+                      <img alt={`${testimonial.name} portrait`} className="h-12 w-12 rounded-full object-cover" src={testimonial.image} />
+                      <div><div className="font-bold">{testimonial.name}</div><div className="text-sm uppercase tracking-wider text-on-surface-variant">{testimonial.role}</div></div>
                     </div>
-                    <Typography className="mt-5 text-sm leading-7 text-slate-500" component="p">
-                      {item.description}
-                    </Typography>
                   </div>
                 </Reveal>
               ))}
@@ -732,127 +619,48 @@ function HomePage() {
           </div>
         </section>
 
-        <section className="section-frame" id="testimonials">
-          <div className="mx-auto max-w-7xl px-4 py-16 sm:px-6 lg:px-8">
-            <SectionIntro
-              align="center"
-              description="Reviews that reflect the operational value of shipping visibility, better courier choice, and dependable support."
-              label="Testimonials"
-              title="What teams say after shipping through CAMPLAR"
-            />
-
-            <div className="mt-10 grid gap-5 lg:grid-cols-3">
-              {testimonials.map((item, index) => (
-                <Reveal key={item.name} delay={index * 0.05}>
-                  <blockquote className="surface-card flex h-full flex-col p-6">
-                    <Typography className="text-base leading-8 text-slate-600" component="p">
-                      &ldquo;{item.quote}&rdquo;
-                    </Typography>
-                    <div className="mt-8 flex items-center gap-4">
-                      <div className="grid h-12 w-12 place-items-center rounded-2xl bg-[#ff5e14]/10 font-heading text-lg tracking-[0.1em] text-[#ff5e14]">
-                        {item.name
-                          .split(" ")
-                          .map((part) => part[0])
-                          .join("")}
-                      </div>
-                      <div>
-                        <Typography className="font-semibold text-slate-950" component="p">
-                          {item.name}
-                        </Typography>
-                        <Typography className="text-sm text-slate-500" component="p">
-                          {item.role}
-                        </Typography>
-                      </div>
+        <section className="px-6 py-32 sm:px-8">
+          <div className="mx-auto max-w-3xl">
+            <Reveal><h2 className="font-headline mb-16 text-center text-5xl font-bold">Questions?</h2></Reveal>
+            <div className="space-y-4">
+              {faqs.map((faq, index) => {
+                const isActive = activeFaq === index;
+                return (
+                  <Reveal key={faq.question} delay={index * 0.04}>
+                    <div className="rounded-2xl bg-surface-container p-6">
+                      <button className="group flex w-full items-center justify-between text-left text-xl font-bold" onClick={() => setActiveFaq(isActive ? -1 : index)} type="button">
+                        {faq.question}
+                        <Icon className={isActive ? "text-primary" : "group-hover:text-primary"}>expand_more</Icon>
+                      </button>
+                      <AnimatePresence initial={false}>
+                        {isActive ? (
+                          <Motion.p animate={{ height: "auto", opacity: 1 }} className="overflow-hidden text-on-surface-variant" exit={{ height: 0, opacity: 0 }} initial={{ height: 0, opacity: 0 }} transition={{ duration: 0.25, ease: "easeOut" }}>
+                            <span className="mt-4 block">{faq.answer}</span>
+                          </Motion.p>
+                        ) : null}
+                      </AnimatePresence>
                     </div>
-                  </blockquote>
-                </Reveal>
-              ))}
+                  </Reveal>
+                );
+              })}
             </div>
           </div>
         </section>
 
-        <section className="section-frame" id="faq">
-          <div className="mx-auto max-w-7xl px-4 py-16 sm:px-6 lg:px-8">
-            <SectionIntro
-              description="Common questions around courier aggregation, quoting, integrations, and platform readiness."
-              label="FAQ"
-              title="Answers for teams exploring CAMPLAR"
-            />
-
-            <div className="mt-10 grid gap-4">
-              {faqs.map((item, index) => (
-                <Reveal key={item.question} delay={index * 0.03}>
-                  <Accordion
-                    disableGutters
-                    elevation={0}
-                    sx={{
-                      backgroundColor: "rgba(255,255,255,0.94)",
-                      border: "1px solid rgba(215, 237, 255, 0.95)",
-                      borderRadius: "1rem !important",
-                      boxShadow: "0 14px 40px rgba(0, 29, 103, 0.06)",
-                      "&:before": { display: "none" },
-                    }}
-                  >
-                    <AccordionSummary
-                      expandIcon={<ExpandMoreRoundedIcon sx={{ color: "#ff5e14" }} />}
-                      sx={{
-                        minHeight: "unset",
-                        px: 3,
-                        py: 1.5,
-                        "& .MuiAccordionSummary-content": {
-                          margin: "0",
-                        },
-                      }}
-                    >
-                      <Typography className="font-heading text-2xl tracking-[0.04em] text-slate-950" component="h3">
-                        {item.question}
-                      </Typography>
-                    </AccordionSummary>
-                    <AccordionDetails sx={{ px: 3, pb: 3, pt: 0 }}>
-                      <Typography className="max-w-4xl text-sm leading-8 text-slate-500" component="p">
-                        {item.answer}
-                      </Typography>
-                    </AccordionDetails>
-                  </Accordion>
-                </Reveal>
-              ))}
-            </div>
-          </div>
-        </section>
-
-        <section className="section-frame pb-0">
-          <div className="mx-auto max-w-7xl px-4 pb-16 sm:px-6 lg:px-8">
+        <section className="px-6 py-32 sm:px-8">
+          <div className="mx-auto max-w-screen-2xl">
             <Reveal>
-              <div className="cta-panel">
-                <div>
-                  <Chip
-                    label="Start shipping"
-                    sx={{
-                      backgroundColor: "rgba(255, 94, 20, 0.16)",
-                      borderRadius: "999px",
-                      color: "#ffd3c0",
-                      fontFamily: '"Montserrat", sans-serif',
-                      fontSize: "0.68rem",
-                      fontWeight: 700,
-                      letterSpacing: "0.2em",
-                      textTransform: "uppercase",
-                    }}
-                  />
-                  <Typography className="mt-4 font-heading text-4xl tracking-[0.05em] text-white sm:text-5xl" component="h2">
-                    Ready to simplify courier operations and protect your shipping margins?
-                  </Typography>
-                  <Typography className="mt-5 max-w-2xl text-base leading-8 text-white/78" component="p">
-                    Explore the quote calculator or book a demo to shape your courier workflow around
-                    better rates, cleaner visibility, and fewer operational bottlenecks.
-                  </Typography>
+              <div className="kinetic-gradient ambient-shadow relative overflow-hidden rounded-[3rem] p-12 text-center text-on-primary md:p-24">
+                <div className="pointer-events-none absolute left-0 top-0 h-full w-full opacity-10">
+                  <img alt="Abstract shipping container terminal with vibrant primary color patterns." className="h-full w-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBVD2LUSEvsRGsATc-2SWY2k9PnnE5nXm0R8MLBBCe588rGnYhIdyMtqTvwceax5WRORkD52cCcmz15rKE0wxog3XyEwKJTJPDVNDDO77P2unkbvol_wq1DIInfTrOjgHAsquK2x2Mu53t6NBpsIwtx9ebjBI_-Pz5ki84Td-jz7i_x3zeRyuKXYtwyZH3Zw20R-s-1yZwiY7GgjQFBgwvTOREvbgmhuvpbNDWOqccE7VGLbBkPQrXpnD9gNOlwkTBzdRVuzykCX_A" />
                 </div>
-                <div className="flex flex-col gap-3 sm:flex-row">
-                  <button className="cta-button cta-button--light" onClick={scrollToCalculator} type="button">
-                    Start Shipping
-                  </button>
-                  <Link className="outline-button outline-button--dark" to="/contact">
-                    Book Demo
-                  </Link>
+                <div className="relative z-10">
+                  <h2 className="font-headline mb-8 text-5xl font-bold md:text-7xl">Ready to Accelerate?</h2>
+                  <p className="mx-auto mb-12 max-w-2xl text-xl text-on-primary/80 md:text-2xl">Join businesses scaling their logistics with {COMPANY_NAME} and the {BRAND_NAME} shipping network.</p>
+                  <div className="flex flex-wrap justify-center gap-6">
+                    <Motion.a {...interactiveMotion} className="rounded-xl bg-on-primary px-12 py-5 text-xl font-bold text-primary" href={SITE_URL} rel="noreferrer" target="_blank">Start Shipping Now</Motion.a>
+                    <Motion.a {...interactiveMotion} className="rounded-xl border-2 border-on-primary px-12 py-5 text-xl font-bold text-on-primary transition-all hover:bg-on-primary/10" href={SITE_URL} rel="noreferrer" target="_blank">Book a Demo</Motion.a>
+                  </div>
                 </div>
               </div>
             </Reveal>
@@ -860,9 +668,7 @@ function HomePage() {
         </section>
       </main>
 
-      <SiteFooter />
+      <Footer />
     </div>
   );
 }
-
-export default HomePage;

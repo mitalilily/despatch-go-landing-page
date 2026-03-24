@@ -1,40 +1,60 @@
-function isValidPincode(value) {
-  return /^\d{6}$/.test(String(value).trim());
+const PINCODE_REGEX = /^\d{6}$/;
+
+function toNumber(value) {
+  const parsed = Number.parseFloat(value);
+  return Number.isFinite(parsed) ? parsed : 0;
 }
 
-function resolveZone(pickupPincode, deliveryPincode) {
-  const pickup = String(pickupPincode);
-  const delivery = String(deliveryPincode);
-
+function detectZone(pickup, delivery) {
   if (pickup.slice(0, 3) === delivery.slice(0, 3)) {
-    return { label: "Local", surcharge: 18, eta: "1-2 days" };
+    return { label: "Local lane", baseRate: 52, perKgRate: 24 };
   }
 
   if (pickup.slice(0, 1) === delivery.slice(0, 1)) {
-    return { label: "Regional", surcharge: 34, eta: "2-4 days" };
+    return { label: "Regional lane", baseRate: 68, perKgRate: 31 };
   }
 
-  return { label: "National", surcharge: 56, eta: "4-6 days" };
+  return { label: "National lane", baseRate: 94, perKgRate: 41 };
 }
 
-export function calculateShippingEstimate({ packageWeight, pickupPincode, deliveryPincode }) {
-  const weight = Number(packageWeight) || 0;
-
-  if (weight <= 0 || !isValidPincode(pickupPincode) || !isValidPincode(deliveryPincode)) {
-    return {
-      estimatedCost: 0,
-      zoneLabel: "--",
-      eta: "--",
-    };
+export function validateShippingEstimate(form) {
+  if (!PINCODE_REGEX.test(form.pickup)) {
+    return "Enter a valid 6-digit pickup pincode.";
   }
 
-  const zone = resolveZone(pickupPincode, deliveryPincode);
-  const baseCharge = 42;
-  const weightCharge = weight <= 0.5 ? 0 : Math.ceil((weight - 0.5) * 2) * 12;
+  if (!PINCODE_REGEX.test(form.delivery)) {
+    return "Enter a valid 6-digit delivery pincode.";
+  }
+
+  if (toNumber(form.weight) <= 0) {
+    return "Add the actual shipment weight in kilograms.";
+  }
+
+  if (toNumber(form.length) <= 0 || toNumber(form.width) <= 0 || toNumber(form.height) <= 0) {
+    return "Add package length, width, and height in centimeters.";
+  }
+
+  return "";
+}
+
+export function calculateShippingEstimate(form) {
+  const actualWeight = toNumber(form.weight);
+  const length = toNumber(form.length);
+  const width = toNumber(form.width);
+  const height = toNumber(form.height);
+  const divisor = form.type === "Express" ? 5000 : 6000;
+  const volumetricWeight = (length * width * height) / divisor;
+  const billableWeight = Math.max(actualWeight, volumetricWeight);
+  const zone = detectZone(form.pickup, form.delivery);
+  const serviceMultiplier = form.type === "Express" ? 1.18 : 1;
+  const estimatedCost = Math.round(zone.baseRate + billableWeight * zone.perKgRate * serviceMultiplier);
 
   return {
-    estimatedCost: Number((baseCharge + zone.surcharge + weightCharge).toFixed(2)),
+    actualWeight,
+    volumetricWeight,
+    billableWeight,
+    divisor,
+    estimatedCost,
     zoneLabel: zone.label,
-    eta: zone.eta,
   };
 }
