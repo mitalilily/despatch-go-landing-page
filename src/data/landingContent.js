@@ -1,9 +1,10 @@
-export const SITE_URL = "https://www.shiplifi.com";
-export const COMPANY_NAME = "Shiplifi";
-export const BRAND_NAME = "Fleet Fly";
-export const OPERATOR_NAME = "Fleet Fly Shipping Solution";
-export const COMPANY_ADDRESS =
-  "B-76 Shiv Shakti Nagar, Jagatpura Road, Malviya Nagar, Jaipur, Rajasthan, India 302017";
+export const SITE_URL = "https://share.google/FYAlcK6HjsIz5UQjO";
+export const COMPANY_NAME = "Despatchgo";
+export const BRAND_NAME = "Despatchgo Logistics";
+export const OPERATOR_NAME = "Despatchgo";
+export const COMPANY_ADDRESS = "Head Office: Bangalore";
+export const COMPANY_EMAIL = "Despatchgoo@gmail.com";
+export const BRANCHES = ["Hyderabad", "Bangalore", "Chennai"];
 
 export const navItems = [
   { label: "Services", href: "#services" },
@@ -69,7 +70,7 @@ export const integrations = [
 export const testimonials = [
   {
     quote:
-      "Shiplifi reduced our shipping costs by 30% in the first month. The rate comparison engine is a total game changer for our D2C brand.",
+      "Despatchgo reduced our shipping costs by 30% in the first month. The rate comparison engine is a total game changer for our D2C brand.",
     name: "Marcus Chen",
     role: "CEO, Aura Home",
     image:
@@ -97,7 +98,7 @@ export const faqs = [
   {
     question: "How does courier aggregation work?",
     answer:
-      "Shiplifi consolidates shipping volumes from multiple businesses and uses that demand to unlock stronger carrier pricing, better serviceability, and one unified dashboard for dispatch, tracking, COD, and NDR workflows.",
+      "Despatchgo consolidates shipping volumes from multiple businesses and uses that demand to unlock stronger carrier pricing, better serviceability, and one unified dashboard for dispatch, tracking, COD, and NDR workflows.",
   },
   {
     question: "Do I need a separate account for each courier?",
@@ -107,6 +108,6 @@ export const faqs = [
   {
     question: "Is there a monthly subscription fee?",
     answer:
-      "The landing page focuses on the shipping and aggregation experience. Commercial details can be finalized directly through the Shiplifi team based on volume, workflow, and carrier mix.",
+      "The landing page focuses on the shipping and aggregation experience. Commercial details can be finalized directly through the Despatchgo team based on volume, workflow, and carrier mix.",
   },
 ];

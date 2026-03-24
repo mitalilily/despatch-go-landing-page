@@ -1,11 +1,15 @@
+import { Chip } from "@mui/material";
 import { AnimatePresence, motion as Motion, useReducedMotion } from "framer-motion";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import BrandMark from "../components/landing/BrandMark";
 import Icon from "../components/landing/Icon";
 import Reveal from "../components/landing/Reveal";
 import {
   BRAND_NAME,
+  BRANCHES,
   carrierPartners,
   COMPANY_ADDRESS,
+  COMPANY_EMAIL,
   COMPANY_NAME,
   faqs,
   integrations,
@@ -16,19 +20,26 @@ import {
   testimonials,
   trustLogos,
 } from "../data/landingContent";
-import { calculateShippingEstimate, validateShippingEstimate } from "../utils/shippingCalculator";
+import {
+  buildShippingPreview,
+  calculateShippingEstimate,
+  validateShippingEstimate,
+} from "../utils/shippingCalculator";
 
 function formatWeight(value) {
   return value.toFixed(2).replace(/\.00$/, "").replace(/(\.\d)0$/, "$1");
 }
 
+const TRACKING_STORAGE_KEY = "despatchgo-tracking-number";
+const ESTIMATE_STORAGE_KEY = "despatchgo-estimate-form";
+
 function Header({ interactiveMotion }) {
   return (
     <header className="fixed top-0 z-50 w-full bg-white/70 backdrop-blur-xl shadow-sm">
-      <div className="relative mx-auto flex h-20 max-w-screen-2xl items-center justify-between px-6 sm:px-8">
-        <div className="font-headline text-2xl font-black uppercase tracking-tighter text-slate-900">
-          {COMPANY_NAME}
-        </div>
+      <div className="relative mx-auto flex h-20 max-w-screen-2xl items-center justify-between gap-4 px-4 sm:px-8">
+        <a className="origin-left scale-[0.68] sm:scale-[0.82]" href="#hero">
+          <BrandMark compact />
+        </a>
 
         <nav className="hidden items-center gap-8 md:flex">
           {navItems.map((item, index) => (
@@ -63,7 +74,7 @@ function Header({ interactiveMotion }) {
 function Hero({
   estimateError,
   estimateForm,
-  estimateResult,
+  estimatePreview,
   handleEstimateSubmit,
   handleTrackSubmit,
   interactiveMotion,
@@ -74,7 +85,7 @@ function Hero({
   const reduceMotion = useReducedMotion();
 
   return (
-    <section className="relative flex min-h-[921px] items-center overflow-hidden px-6 py-24 sm:px-8">
+    <section className="relative flex min-h-[921px] items-center overflow-hidden px-6 py-24 sm:px-8" id="hero">
       <div className="absolute right-0 top-0 hidden h-full w-1/3 pointer-events-none opacity-10 lg:block">
         <img
           alt="High-speed cargo container ship moving across blue ocean water at dusk."
@@ -96,9 +107,9 @@ function Hero({
           </h1>
 
           <p className="mb-12 max-w-xl text-xl leading-relaxed text-on-surface-variant">
-            Shiplifi is the modern courier aggregation interface from {BRAND_NAME}. Compare rates
-            from leading carriers, automate shipments, and keep every order visible through one
-            editorial-grade workflow.
+            Despatchgo is the responsive logistics interface built for modern courier aggregation,
+            volumetric billing clarity, and fast-moving operations across Bangalore, Hyderabad, and
+            Chennai.
           </p>
 
           <div className="flex flex-wrap gap-4">
@@ -160,8 +171,31 @@ function Hero({
                   Compare actual weight with volumetric weight before you ship.
                 </p>
               </div>
-              <div className="rounded-full bg-primary/10 px-4 py-2 text-xs font-bold uppercase tracking-[0.18em] text-primary">
-                {estimateForm.type === "Express" ? "5000 divisor" : "6000 divisor"}
+              <div className="flex flex-wrap gap-2">
+                <Chip
+                  label={estimateForm.type === "Express" ? "5000 divisor" : "6000 divisor"}
+                  sx={{
+                    backgroundColor: "rgba(179, 40, 47, 0.1)",
+                    color: "#b3282f",
+                    fontFamily: '"Inter", sans-serif',
+                    fontSize: "0.72rem",
+                    fontWeight: 700,
+                    letterSpacing: "0.12em",
+                    textTransform: "uppercase",
+                  }}
+                />
+                <Chip
+                  label="Saved locally"
+                  sx={{
+                    backgroundColor: "rgba(17, 28, 45, 0.08)",
+                    color: "#111c2d",
+                    fontFamily: '"Inter", sans-serif',
+                    fontSize: "0.72rem",
+                    fontWeight: 700,
+                    letterSpacing: "0.08em",
+                    textTransform: "uppercase",
+                  }}
+                />
               </div>
             </div>
 
@@ -274,52 +308,52 @@ function Hero({
                 </div>
               ) : null}
 
-              {estimateResult ? (
-                <div aria-live="polite" className="rounded-[1.5rem] bg-surface-container-high p-5">
-                  <div className="grid grid-cols-1 gap-3 sm:grid-cols-3">
-                    <div className="rounded-2xl bg-white px-4 py-4">
-                      <div className="text-xs font-bold uppercase tracking-[0.18em] text-on-surface-variant">
-                        Actual weight
-                      </div>
-                      <div className="mt-2 text-2xl font-bold text-on-surface">
-                        {formatWeight(estimateResult.actualWeight)} kg
-                      </div>
+              <div aria-live="polite" className="rounded-[1.5rem] bg-surface-container-high p-5">
+                <div className="grid grid-cols-1 gap-3 sm:grid-cols-3">
+                  <div className="rounded-2xl bg-white px-4 py-4">
+                    <div className="text-xs font-bold uppercase tracking-[0.18em] text-on-surface-variant">
+                      Actual weight
                     </div>
-                    <div className="rounded-2xl bg-white px-4 py-4">
-                      <div className="text-xs font-bold uppercase tracking-[0.18em] text-on-surface-variant">
-                        Volumetric weight
-                      </div>
-                      <div className="mt-2 text-2xl font-bold text-on-surface">
-                        {formatWeight(estimateResult.volumetricWeight)} kg
-                      </div>
-                    </div>
-                    <div className="rounded-2xl bg-primary px-4 py-4 text-on-primary">
-                      <div className="text-xs font-bold uppercase tracking-[0.18em] text-on-primary/70">
-                        Billable weight
-                      </div>
-                      <div className="mt-2 text-2xl font-bold">
-                        {formatWeight(estimateResult.billableWeight)} kg
-                      </div>
+                    <div className="mt-2 text-2xl font-bold text-on-surface">
+                      {formatWeight(estimatePreview.actualWeight)} kg
                     </div>
                   </div>
-
-                  <div className="mt-4 rounded-2xl bg-white px-4 py-4">
-                    <div className="flex flex-wrap items-center justify-between gap-3">
-                      <div>
-                        <div className="text-xs font-bold uppercase tracking-[0.18em] text-on-surface-variant">
-                          Estimated {estimateForm.type.toLowerCase()} rate
-                        </div>
-                        <div className="mt-2 text-3xl font-bold text-on-surface">
-                          Rs. {estimateResult.estimatedCost}
-                        </div>
-                      </div>
-                      <div className="rounded-full bg-primary/10 px-4 py-2 text-sm font-bold text-primary">
-                        {estimateResult.zoneLabel}
-                      </div>
+                  <div className="rounded-2xl bg-white px-4 py-4">
+                    <div className="text-xs font-bold uppercase tracking-[0.18em] text-on-surface-variant">
+                      Volumetric weight
+                    </div>
+                    <div className="mt-2 text-2xl font-bold text-on-surface">
+                      {formatWeight(estimatePreview.volumetricWeight)} kg
+                    </div>
+                  </div>
+                  <div className="rounded-2xl bg-primary px-4 py-4 text-on-primary">
+                    <div className="text-xs font-bold uppercase tracking-[0.18em] text-on-primary/70">
+                      Billable weight
+                    </div>
+                    <div className="mt-2 text-2xl font-bold">
+                      {formatWeight(estimatePreview.billableWeight)} kg
                     </div>
                   </div>
                 </div>
-              ) : null}
+
+                <div className="mt-4 rounded-2xl bg-white px-4 py-4">
+                  <div className="flex flex-wrap items-center justify-between gap-3">
+                    <div>
+                      <div className="text-xs font-bold uppercase tracking-[0.18em] text-on-surface-variant">
+                        Estimated {estimateForm.type.toLowerCase()} rate
+                      </div>
+                      <div className="mt-2 text-3xl font-bold text-on-surface">
+                        {estimatePreview.estimatedCost !== null
+                          ? `Rs. ${estimatePreview.estimatedCost}`
+                          : "Complete route details"}
+                      </div>
+                    </div>
+                    <div className="rounded-full bg-primary/10 px-4 py-2 text-sm font-bold text-primary">
+                      {estimatePreview.zoneLabel}
+                    </div>
+                  </div>
+                </div>
+              </div>
 
               <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
                 <Motion.button
@@ -352,10 +386,10 @@ function Footer() {
     <footer className="w-full border-t border-slate-200 bg-slate-50">
       <div className="mx-auto grid max-w-screen-2xl grid-cols-1 gap-12 px-6 py-16 md:grid-cols-4 sm:px-8">
         <div className="col-span-1">
-          <div className="font-headline mb-6 text-xl font-bold uppercase text-slate-900">{COMPANY_NAME}</div>
+          <BrandMark className="mb-6 origin-left scale-[0.88]" />
           <p className="mb-6 text-sm text-slate-500">
-            Shipping Simplified for modern teams that want cleaner dispatch, stronger rates, and a
-            sharper logistics experience.
+            Despatchgo keeps courier pricing, volumetric billing, and dispatch visibility aligned in
+            one fast, responsive logistics experience.
           </p>
           <div className="flex gap-4">
             <a href={SITE_URL} rel="noreferrer" target="_blank">
@@ -383,20 +417,27 @@ function Footer() {
           <h5 className="mb-6 text-sm font-bold uppercase tracking-widest text-slate-900">Company</h5>
           <ul className="space-y-4 text-sm text-slate-500">
             <li>{COMPANY_NAME}</li>
-            <li>Brand Name: {BRAND_NAME}</li>
+            <li>{BRAND_NAME}</li>
             <li>{OPERATOR_NAME}</li>
+            <li>{COMPANY_EMAIL}</li>
           </ul>
         </div>
 
         <div>
-          <h5 className="mb-6 text-sm font-bold uppercase tracking-widest text-slate-900">Contact</h5>
+          <h5 className="mb-6 text-sm font-bold uppercase tracking-widest text-slate-900">Network</h5>
           <ul className="space-y-4 text-sm text-slate-500">
             <li>
+              <a className="transition-all hover:text-red-600 hover:underline" href={`mailto:${COMPANY_EMAIL}`}>
+                {COMPANY_EMAIL}
+              </a>
+            </li>
+            <li>
               <a className="transition-all hover:text-red-600 hover:underline" href={SITE_URL} rel="noreferrer" target="_blank">
-                www.shiplifi.com
+                {SITE_URL}
               </a>
             </li>
             <li>{COMPANY_ADDRESS}</li>
+            <li>Branches: {BRANCHES.join(" • ")}</li>
           </ul>
         </div>
       </div>
@@ -427,6 +468,45 @@ export default function HomePage() {
   const [estimateResult, setEstimateResult] = useState(null);
 
   const interactiveMotion = reduceMotion ? {} : { whileHover: { y: -2, scale: 1.01 }, whileTap: { scale: 0.985 } };
+  const estimatePreview = estimateResult ?? buildShippingPreview(estimateForm);
+
+  useEffect(() => {
+    if (typeof window === "undefined") {
+      return;
+    }
+
+    const savedTrackingNumber = window.localStorage.getItem(TRACKING_STORAGE_KEY);
+    const savedEstimateForm = window.localStorage.getItem(ESTIMATE_STORAGE_KEY);
+
+    if (savedTrackingNumber) {
+      setTrackingNumber(savedTrackingNumber);
+    }
+
+    if (savedEstimateForm) {
+      try {
+        const parsed = JSON.parse(savedEstimateForm);
+        setEstimateForm((current) => ({ ...current, ...parsed }));
+
+        if (!validateShippingEstimate(parsed)) {
+          setEstimateResult(calculateShippingEstimate(parsed));
+        }
+      } catch {
+        window.localStorage.removeItem(ESTIMATE_STORAGE_KEY);
+      }
+    }
+  }, []);
+
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      window.localStorage.setItem(TRACKING_STORAGE_KEY, trackingNumber);
+    }
+  }, [trackingNumber]);
+
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      window.localStorage.setItem(ESTIMATE_STORAGE_KEY, JSON.stringify(estimateForm));
+    }
+  }, [estimateForm]);
 
   const openWebsite = () => {
     if (typeof window !== "undefined") {
@@ -462,7 +542,7 @@ export default function HomePage() {
         <Hero
           estimateError={estimateError}
           estimateForm={estimateForm}
-          estimateResult={estimateResult}
+          estimatePreview={estimatePreview}
           handleEstimateSubmit={handleEstimateSubmit}
           handleTrackSubmit={(event) => { event.preventDefault(); openWebsite(); }}
           interactiveMotion={interactiveMotion}

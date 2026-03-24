@@ -17,6 +17,42 @@ function detectZone(pickup, delivery) {
   return { label: "National lane", baseRate: 94, perKgRate: 41 };
 }
 
+export function buildShippingPreview(form) {
+  const actualWeight = toNumber(form.weight);
+  const length = toNumber(form.length);
+  const width = toNumber(form.width);
+  const height = toNumber(form.height);
+  const divisor = form.type === "Express" ? 5000 : 6000;
+  const hasDimensions = length > 0 && width > 0 && height > 0;
+  const volumetricWeight = hasDimensions ? (length * width * height) / divisor : 0;
+  const billableWeight = Math.max(actualWeight, volumetricWeight);
+  const hasPins = PINCODE_REGEX.test(form.pickup) && PINCODE_REGEX.test(form.delivery);
+
+  if (!hasPins || billableWeight <= 0) {
+    return {
+      actualWeight,
+      volumetricWeight,
+      billableWeight,
+      divisor,
+      estimatedCost: null,
+      zoneLabel: "Zone pending",
+    };
+  }
+
+  const zone = detectZone(form.pickup, form.delivery);
+  const serviceMultiplier = form.type === "Express" ? 1.18 : 1;
+  const estimatedCost = Math.round(zone.baseRate + billableWeight * zone.perKgRate * serviceMultiplier);
+
+  return {
+    actualWeight,
+    volumetricWeight,
+    billableWeight,
+    divisor,
+    estimatedCost,
+    zoneLabel: zone.label,
+  };
+}
+
 export function validateShippingEstimate(form) {
   if (!PINCODE_REGEX.test(form.pickup)) {
     return "Enter a valid 6-digit pickup pincode.";
@@ -38,23 +74,5 @@ export function validateShippingEstimate(form) {
 }
 
 export function calculateShippingEstimate(form) {
-  const actualWeight = toNumber(form.weight);
-  const length = toNumber(form.length);
-  const width = toNumber(form.width);
-  const height = toNumber(form.height);
-  const divisor = form.type === "Express" ? 5000 : 6000;
-  const volumetricWeight = (length * width * height) / divisor;
-  const billableWeight = Math.max(actualWeight, volumetricWeight);
-  const zone = detectZone(form.pickup, form.delivery);
-  const serviceMultiplier = form.type === "Express" ? 1.18 : 1;
-  const estimatedCost = Math.round(zone.baseRate + billableWeight * zone.perKgRate * serviceMultiplier);
-
-  return {
-    actualWeight,
-    volumetricWeight,
-    billableWeight,
-    divisor,
-    estimatedCost,
-    zoneLabel: zone.label,
-  };
+  return buildShippingPreview(form);
 }
