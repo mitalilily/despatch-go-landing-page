@@ -1,7 +1,7 @@
 export const SITE_URL = "https://share.google/FYAlcK6HjsIz5UQjO";
-export const COMPANY_NAME = "Despatchgo";
-export const BRAND_NAME = "Despatchgo Logistics";
-export const OPERATOR_NAME = "Despatchgo";
+export const COMPANY_NAME = "DespatchGo";
+export const BRAND_NAME = "DespatchGo";
+export const OPERATOR_NAME = "DespatchGo";
 export const COMPANY_ADDRESS = "Head Office: Bangalore";
 export const COMPANY_EMAIL = "Despatchgoo@gmail.com";
 export const BRANCHES = ["Hyderabad", "Bangalore", "Chennai"];
@@ -9,7 +9,7 @@ export const BRANCHES = ["Hyderabad", "Bangalore", "Chennai"];
 export const navItems = [
   { label: "Services", href: "#services" },
   { label: "Pricing", href: "#pricing" },
-  { label: "Track", href: "#track" },
+  { label: "Tracking", href: "/tracking" },
 ];
 
 export const trustLogos = [
@@ -70,25 +70,25 @@ export const integrations = [
 export const testimonials = [
   {
     quote:
-      "Despatchgo reduced our shipping costs by 30% in the first month. The rate comparison engine is a total game changer for our D2C brand.",
-    name: "Marcus Chen",
-    role: "CEO, Aura Home",
+      "DespatchGo reduced our shipping costs by 30% in the first month. The rate comparison engine is a total game changer for our D2C brand.",
+    name: "Aarav Mehta",
+    role: "Founder, UrbanCart",
     image:
       "https://lh3.googleusercontent.com/aida-public/AB6AXuBZJpAJcH9RgA0OdJzZx8b8hkAtyiZNoF6JuNVmBToceLnm1yMc9JuAdNU0zoNvQXTje1uwTknCa0wjuZcAFddP51WAmrxagBR3R9r3m8oo-AdckW7h1epceWcYn3PxF3km8F3yMjTyr3UNaHDjd5Y2AVaSp-adXvvTFY1X2z98FJexUKi82Es4XTKIvepNuxO49wGDbqHdSVtnYRRBHKkdMTAxZQDMyZMvSRbgZie7s61DrHfXad3pfYrfe8mObQJ2uE83yY95Vfs",
   },
   {
     quote:
-      "Finally, a logistics platform that does not look like it was built in 1995. The API is clean, and the NDR management is fantastic.",
-    name: "Sarah Jenkins",
-    role: "CTO, ModCloth",
+      "Finally, a logistics platform that feels modern and simple for operations. COD and NDR handling has become much easier for our team.",
+    name: "Ishita Sharma",
+    role: "Operations Head, TrendHive",
     image:
       "https://lh3.googleusercontent.com/aida-public/AB6AXuDVClirfOfVKG5n4MVymckC5hfGH-OlsM8_ahXWeVwc2ts8Lhwhlvn3f82IIJzgslHQF6Ge-MapuqHdv-Dzl30a7E-gw66uW1kNvp9JW8o3KeK5yq-BMDrpskC-Intk7CvYkg8Evi9T4wXE4nLarrADAu1RpIxo4nwHutyB56TBRNE5N2prXbQ_EAQS6pWqJqzqtibxntUWayO_-NI1ORHHpMYPD6ULOiG-ruHgxNIjsN5-UyRFf5J9V78r8x11AWWFC1s0eI0vKb0",
   },
   {
     quote:
-      "The kinetic tracking updates have significantly reduced our customer support tickets. Our buyers love the real-time visibility.",
-    name: "David Rodriguez",
-    role: "Ops Lead, GearUp",
+      "The tracking updates have significantly reduced our customer support tickets. Our buyers love the real-time visibility.",
+    name: "Rohan Iyer",
+    role: "Logistics Manager, SwiftStyle",
     image:
       "https://lh3.googleusercontent.com/aida-public/AB6AXuC4fc3QFSEQmY6WxKdKB8JZFDNQUIl53KfSDjAU2OruboFA8t0_QZOA5ZsvnR2AIb4GH-MW2ItChHvn1gZY04kK5LNh07SIBojvOywjHUD77AThrKo4xcRxhnIdwZQuBmSY9Sv9VbKnrtYEt3d6cerZ_Z-Y_0wcX-o-3D-tD7qhHDnYRWAnC6NirkEYh1DNA8ICs6oN_8TebrVnCJnMJWEKKZiRo7rLhN8ryITSANByO89iXQApVtrvu1dJJ1sKo5Y0GBDd5WqfacA",
   },
@@ -98,7 +98,7 @@ export const faqs = [
   {
     question: "How does courier aggregation work?",
     answer:
-      "Despatchgo consolidates shipping volumes from multiple businesses and uses that demand to unlock stronger carrier pricing, better serviceability, and one unified dashboard for dispatch, tracking, COD, and NDR workflows.",
+      "DespatchGo consolidates shipping volumes from multiple businesses and uses that demand to unlock stronger carrier pricing, better serviceability, and one unified dashboard for dispatch, tracking, COD, and NDR workflows.",
   },
   {
     question: "Do I need a separate account for each courier?",
@@ -108,6 +108,6 @@ export const faqs = [
   {
     question: "Is there a monthly subscription fee?",
     answer:
-      "The landing page focuses on the shipping and aggregation experience. Commercial details can be finalized directly through the Despatchgo team based on volume, workflow, and carrier mix.",
+      "The landing page focuses on the shipping and aggregation experience. Commercial details can be finalized directly through the DespatchGo team based on volume, workflow, and carrier mix.",
   },
 ];

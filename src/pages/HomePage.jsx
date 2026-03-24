@@ -1,6 +1,7 @@
 import { Chip } from "@mui/material";
 import { AnimatePresence, motion as Motion, useReducedMotion } from "framer-motion";
 import { useEffect, useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
 import BrandMark from "../components/landing/BrandMark";
 import Icon from "../components/landing/Icon";
 import Reveal from "../components/landing/Reveal";
@@ -12,13 +13,10 @@ import {
   COMPANY_EMAIL,
   COMPANY_NAME,
   faqs,
-  integrations,
-  navItems,
   OPERATOR_NAME,
   SITE_URL,
   steps,
   testimonials,
-  trustLogos,
 } from "../data/landingContent";
 import {
   buildShippingPreview,
@@ -30,8 +28,10 @@ function formatWeight(value) {
   return value.toFixed(2).replace(/\.00$/, "").replace(/(\.\d)0$/, "$1");
 }
 
-const TRACKING_STORAGE_KEY = "despatchgo-tracking-number";
-const ESTIMATE_STORAGE_KEY = "despatchgo-estimate-form";
+const TRACKING_STORAGE_KEY = "despatch-go-tracking-number";
+const LEGACY_TRACKING_STORAGE_KEY = "despatchgo-tracking-number";
+const ESTIMATE_STORAGE_KEY = "despatch-go-estimate-form";
+const LEGACY_ESTIMATE_STORAGE_KEY = "despatchgo-estimate-form";
 
 function Header({ interactiveMotion }) {
   return (
@@ -42,17 +42,29 @@ function Header({ interactiveMotion }) {
         </a>
 
         <nav className="hidden items-center gap-8 md:flex">
-          {navItems.map((item, index) => (
-            <a
-              key={item.label}
-              className={`font-headline font-bold tracking-tight transition-colors ${
-                index === 0 ? "border-b-2 border-red-600 pb-1 text-red-600" : "text-slate-600 hover:text-slate-900"
-              }`}
-              href={item.href}
-            >
-              {item.label}
-            </a>
-          ))}
+          <a className="border-b-2 border-red-600 pb-1 font-headline font-bold tracking-tight text-red-600" href="#services">
+            Services
+          </a>
+          <a className="font-headline font-bold tracking-tight text-slate-600 transition-colors hover:text-slate-900" href="#pricing">
+            Pricing
+          </a>
+          <Link className="font-headline font-bold tracking-tight text-slate-600 transition-colors hover:text-slate-900" to="/tracking">
+            Tracking
+          </Link>
+          <div className="group relative">
+            <button className="inline-flex items-center gap-1 font-headline font-bold tracking-tight text-slate-600 transition-colors hover:text-slate-900" type="button">
+              Utilities
+              <Icon className="text-base">expand_more</Icon>
+            </button>
+            <div className="pointer-events-none absolute left-0 top-full z-10 mt-2 min-w-64 rounded-xl border border-slate-200 bg-white p-2 opacity-0 shadow-xl transition-all group-hover:pointer-events-auto group-hover:opacity-100">
+              <Link className="block rounded-lg px-3 py-2 text-sm font-medium text-slate-700 transition-colors hover:bg-slate-100 hover:text-slate-900" to="/utilities/volumetric-weight">
+                Volumetric Weight Calculator
+              </Link>
+              <Link className="block rounded-lg px-3 py-2 text-sm font-medium text-slate-700 transition-colors hover:bg-slate-100 hover:text-slate-900" to="/utilities/rate-calculator">
+                Rate Calculator
+              </Link>
+            </div>
+          </div>
         </nav>
 
         <Motion.a
@@ -78,6 +90,8 @@ function Hero({
   handleEstimateSubmit,
   handleTrackSubmit,
   interactiveMotion,
+  onNavigateTracking,
+  onNavigateUtilities,
   setTrackingNumber,
   trackingNumber,
   updateEstimateField,
@@ -107,28 +121,28 @@ function Hero({
           </h1>
 
           <p className="mb-12 max-w-xl text-xl leading-relaxed text-on-surface-variant">
-            Despatchgo is the responsive logistics interface built for modern courier aggregation,
+            DespatchGo is the responsive logistics interface built for modern courier aggregation,
             volumetric billing clarity, and fast-moving operations across Bangalore, Hyderabad, and
             Chennai.
           </p>
 
           <div className="flex flex-wrap gap-4">
-            <Motion.a
+            <Motion.button
               {...interactiveMotion}
               className="kinetic-gradient ambient-shadow rounded-xl px-8 py-4 text-lg font-bold text-on-primary"
-              href={SITE_URL}
-              rel="noreferrer"
-              target="_blank"
+              onClick={onNavigateTracking}
+              type="button"
             >
-              Start Shipping
-            </Motion.a>
-            <Motion.a
+              Tracking
+            </Motion.button>
+            <Motion.button
               {...interactiveMotion}
               className="rounded-xl bg-surface-container-high px-8 py-4 text-lg font-bold text-on-surface transition-colors hover:bg-surface-container-highest"
-              href="#pricing"
+              onClick={onNavigateUtilities}
+              type="button"
             >
-              Explore Pricing
-            </Motion.a>
+              Utilities
+            </Motion.button>
           </div>
 
           <form
@@ -388,7 +402,7 @@ function Footer() {
         <div className="col-span-1">
           <BrandMark className="mb-6 origin-left scale-[0.88]" />
           <p className="mb-6 text-sm text-slate-500">
-            Despatchgo keeps courier pricing, volumetric billing, and dispatch visibility aligned in
+            DespatchGo keeps courier pricing, volumetric billing, and dispatch visibility aligned in
             one fast, responsive logistics experience.
           </p>
           <div className="flex gap-4">
@@ -409,7 +423,7 @@ function Footer() {
           <ul className="space-y-4 text-sm text-slate-500">
             <li><a className="transition-all hover:text-red-600 hover:underline" href="#services">Services</a></li>
             <li><a className="transition-all hover:text-red-600 hover:underline" href="#pricing">Pricing</a></li>
-            <li><a className="transition-all hover:text-red-600 hover:underline" href="#track">Live Track</a></li>
+            <li><Link className="transition-all hover:text-red-600 hover:underline" to="/tracking">Live Track</Link></li>
           </ul>
         </div>
 
@@ -453,6 +467,7 @@ function Footer() {
 
 export default function HomePage() {
   const reduceMotion = useReducedMotion();
+  const navigate = useNavigate();
   const [activeFaq, setActiveFaq] = useState(0);
   const [trackingNumber, setTrackingNumber] = useState("");
   const [estimateForm, setEstimateForm] = useState({
@@ -475,8 +490,10 @@ export default function HomePage() {
       return;
     }
 
-    const savedTrackingNumber = window.localStorage.getItem(TRACKING_STORAGE_KEY);
-    const savedEstimateForm = window.localStorage.getItem(ESTIMATE_STORAGE_KEY);
+    const savedTrackingNumber = window.localStorage.getItem(TRACKING_STORAGE_KEY)
+      ?? window.localStorage.getItem(LEGACY_TRACKING_STORAGE_KEY);
+    const savedEstimateForm = window.localStorage.getItem(ESTIMATE_STORAGE_KEY)
+      ?? window.localStorage.getItem(LEGACY_ESTIMATE_STORAGE_KEY);
 
     if (savedTrackingNumber) {
       setTrackingNumber(savedTrackingNumber);
@@ -508,12 +525,6 @@ export default function HomePage() {
     }
   }, [estimateForm]);
 
-  const openWebsite = () => {
-    if (typeof window !== "undefined") {
-      window.open(SITE_URL, "_blank", "noopener,noreferrer");
-    }
-  };
-
   const updateEstimateField = (field) => (event) => {
     setEstimateError("");
     setEstimateResult(null);
@@ -544,33 +555,39 @@ export default function HomePage() {
           estimateForm={estimateForm}
           estimatePreview={estimatePreview}
           handleEstimateSubmit={handleEstimateSubmit}
-          handleTrackSubmit={(event) => { event.preventDefault(); openWebsite(); }}
+          handleTrackSubmit={(event) => {
+            event.preventDefault();
+            navigate("/tracking");
+          }}
           interactiveMotion={interactiveMotion}
+          onNavigateTracking={() => navigate("/tracking")}
+          onNavigateUtilities={() => navigate("/utilities")}
           setTrackingNumber={setTrackingNumber}
           trackingNumber={trackingNumber}
           updateEstimateField={updateEstimateField}
         />
 
         <section className="bg-surface-container-low px-6 py-24 sm:px-8">
-          <Reveal className="mx-auto flex max-w-screen-2xl flex-col items-center justify-between gap-12 md:flex-row">
-            <div className="flex items-baseline gap-12">
-              <div>
-                <div className="font-headline text-5xl font-bold text-primary">99.8%</div>
-                <div className="mt-2 text-sm font-bold uppercase tracking-widest text-on-surface-variant">Precision Delivery</div>
+          <Reveal className="mx-auto max-w-screen-2xl text-center">
+            <h2 className="font-headline mb-12 text-5xl font-bold">
+              Functionalities Built for <span className="text-primary">Fast Dispatch</span>
+            </h2>
+            <div className="grid grid-cols-1 gap-6 md:grid-cols-3">
+              <div className="rounded-3xl bg-white p-8 text-left shadow-sm">
+                <Icon className="mb-4 text-4xl text-primary">monitoring</Icon>
+                <h3 className="mb-3 text-2xl font-bold">Live Tracking</h3>
+                <p className="text-on-surface-variant">Monitor each shipment movement in real time from pickup to delivery updates.</p>
               </div>
-              <div className="hidden h-16 w-px bg-outline-variant/30 md:block" />
-              <div>
-                <div className="font-headline text-5xl font-bold text-on-surface">220+</div>
-                <div className="mt-2 text-sm font-bold uppercase tracking-widest text-on-surface-variant">Global Countries</div>
+              <div className="rounded-3xl bg-white p-8 text-left shadow-sm">
+                <Icon className="mb-4 text-4xl text-primary">payments</Icon>
+                <h3 className="mb-3 text-2xl font-bold">COD Visibility</h3>
+                <p className="text-on-surface-variant">Track COD collection, settlement status, and NDR actions in a single dashboard.</p>
               </div>
-            </div>
-
-            <div className="flex flex-wrap justify-center gap-12 opacity-50 grayscale transition-all duration-700 hover:grayscale-0">
-              {trustLogos.map((logo, index) => (
-                <Reveal key={logo} delay={0.05 + index * 0.04}>
-                  <img alt={`Partner logo ${index + 1}`} className="h-8" src={logo} />
-                </Reveal>
-              ))}
+              <div className="rounded-3xl bg-white p-8 text-left shadow-sm">
+                <Icon className="mb-4 text-4xl text-primary">calculate</Icon>
+                <h3 className="mb-3 text-2xl font-bold">Rate Utilities</h3>
+                <p className="text-on-surface-variant">Use calculators for volumetric weight and courier rates before every dispatch.</p>
+              </div>
             </div>
           </Reveal>
         </section>
@@ -617,16 +634,16 @@ export default function HomePage() {
               <Reveal className="ambient-shadow rounded-[2rem] bg-white p-12" delay={0.08}>
                 <h3 className="font-headline mb-4 text-3xl font-bold">COD &amp; NDR</h3>
                 <p className="mb-8 text-on-surface-variant">Early COD remittance and faster non-delivery resolution to reduce friction and protect margins.</p>
-                <div className="flex items-center gap-4 font-bold text-tertiary"><Icon>check_circle</Icon><span>3-Day Remittance Cycle</span></div>
+                <div className="flex items-center gap-4 font-bold text-tertiary"><Icon>check_circle</Icon><span>5-Day Remittance Cycle</span></div>
               </Reveal>
 
               <Reveal className="flex items-center gap-12 rounded-[2rem] bg-primary-container p-12 text-on-primary-container md:col-span-2" delay={0.12}>
                 <div className="max-w-lg">
-                  <h3 className="font-headline mb-6 text-4xl font-bold">Robust API Integration</h3>
-                  <p className="text-lg text-on-primary-fixed-variant">Built for developers. Connect your ERP or storefront with clean, high-performance REST APIs in minutes.</p>
-                  <Motion.a {...interactiveMotion} className="mt-8 inline-flex rounded-xl bg-on-primary-container px-6 py-3 font-bold text-on-primary" href={SITE_URL} rel="noreferrer" target="_blank">View Documentation</Motion.a>
+                  <h3 className="font-headline mb-6 text-4xl font-bold">Dedicated Support Desk</h3>
+                  <p className="text-lg text-on-primary-fixed-variant">Get operational help for escalations, pickup issues, and delivery exceptions from a single support queue.</p>
+                  <Motion.a {...interactiveMotion} className="mt-8 inline-flex rounded-xl bg-on-primary-container px-6 py-3 font-bold text-on-primary" href={SITE_URL} rel="noreferrer" target="_blank">Contact Support</Motion.a>
                 </div>
-                <div className="hidden flex-1 md:block"><div className="rounded-xl bg-on-primary-container/10 p-4 font-mono text-sm text-on-primary-fixed-variant"><code>POST /v1/shipments/create</code></div></div>
+                <div className="hidden flex-1 md:block"><div className="rounded-xl bg-on-primary-container/10 p-4 text-sm text-on-primary-fixed-variant">Raise tickets, monitor resolution, and keep dispatches moving without delays.</div></div>
               </Reveal>
             </div>
           </div>
@@ -659,23 +676,6 @@ export default function HomePage() {
               <div className="kinetic-gradient absolute inset-0 -z-10 rotate-3 rounded-[3rem]" />
               <img alt="Clean logistics pricing and savings charts." className="ambient-shadow w-full rounded-[2.5rem]" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBXNF_PXEOHe4kcYVDs8IJbLaeXMN8_0hIpc0OJl3rE0wdez7VtFc7ctUQnI-5XNaA5yHE0ZF4g2bg3zekF6MrMEQ0X7EyToaYqJ30XCb4lZ7Tv2QE6NuqhwRpEepm_X1fnkfj6EUvrKXNqYIdkEq-47ue_dqtCGXVjBi49HdcKxrr6ymDFI5PDWOsYXHWRCQ9DtvxpPBJ6942vi8-61Q9X9q01o7qd_0xX8Dqnj7Ft_pTPb6VR3KodL04X8PcYT1CtOSehZir2jpE" />
             </Reveal>
-          </div>
-        </section>
-
-        <section className="bg-white px-6 py-24 sm:px-8">
-          <div className="mx-auto max-w-screen-2xl">
-            <div className="flex flex-col items-center justify-between gap-12 md:flex-row">
-              <Reveal className="max-w-sm"><h3 className="font-headline mb-4 text-3xl font-bold">Native Store Sync</h3><p className="text-on-surface-variant">Connect your existing workflow with one-click integrations for the most popular commerce platforms.</p></Reveal>
-              <div className="flex flex-wrap items-center justify-center gap-12">
-                {integrations.map((integration, index) => (
-                  <Reveal key={integration.name} delay={0.05 + index * 0.04}>
-                    <div className="flex h-24 w-24 items-center justify-center rounded-3xl bg-surface-container transition-transform hover:scale-110">
-                      <img alt={integration.name} className="h-12 w-12" src={integration.src} />
-                    </div>
-                  </Reveal>
-                ))}
-              </div>
-            </div>
           </div>
         </section>
 
