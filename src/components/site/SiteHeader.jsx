@@ -3,11 +3,21 @@ import { Link, NavLink } from "react-router-dom";
 import { SITE_URL } from "../../data/landingContent";
 import { primaryNavLinks } from "../../data/navigation";
 import BrandMark from "../landing/BrandMark";
+import Icon from "../landing/Icon";
 
 function navLinkClass(isActive) {
   return [
     "rounded-xl px-4 py-2 font-headline text-sm font-bold tracking-tight transition-colors",
     isActive ? "bg-primary text-on-primary" : "text-slate-600 hover:bg-surface-container-low hover:text-slate-900",
+  ].join(" ");
+}
+
+function compactNavLinkClass(isActive) {
+  return [
+    "flex min-w-[7.5rem] shrink-0 flex-col items-center justify-center gap-1.5 rounded-[1.25rem] px-3 py-3 text-center transition-colors",
+    isActive
+      ? "bg-primary text-on-primary shadow-lg shadow-primary/20"
+      : "bg-white/80 text-on-surface hover:bg-surface-container-low",
   ].join(" ");
 }
 
@@ -20,7 +30,7 @@ export default function SiteHeader() {
             <BrandMark compact />
           </Link>
 
-          <nav className="hidden items-center gap-2 md:flex">
+          <nav className="hidden items-center gap-2 xl:flex">
             {primaryNavLinks.map((item) => (
               <NavLink className={({ isActive }) => navLinkClass(isActive)} key={item.to} to={item.to}>
                 {item.label}
@@ -37,6 +47,26 @@ export default function SiteHeader() {
             Get Started
             <NorthEastRoundedIcon sx={{ fontSize: 18 }} />
           </a>
+        </div>
+
+        <div className="mt-3 xl:hidden">
+          <div className="glass-panel ambient-shadow rounded-[1.5rem] border border-white/50 px-3 py-3 sm:px-4">
+            <div className="mb-3 flex items-center justify-between px-1">
+              <span className="text-[0.7rem] font-bold uppercase tracking-[0.24em] text-on-surface-variant">
+                Quick Navigate
+              </span>
+              <span className="text-xs font-medium text-on-surface-variant">Swipe across</span>
+            </div>
+
+            <nav className="grid auto-cols-[minmax(7.5rem,1fr)] grid-flow-col gap-2 overflow-x-auto pb-1 [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden">
+              {primaryNavLinks.map((item) => (
+                <NavLink className={({ isActive }) => compactNavLinkClass(isActive)} key={item.to} to={item.to}>
+                  <Icon className="text-[1.35rem]">{item.icon}</Icon>
+                  <span className="font-headline text-xs font-bold leading-tight">{item.mobileLabel ?? item.label}</span>
+                </NavLink>
+              ))}
+            </nav>
+          </div>
         </div>
       </div>
     </header>

@@ -1,8 +1,8 @@
 export const primaryNavLinks = [
-  { label: "Home", to: "/" },
-  { label: "Tracking", to: "/tracking" },
-  { label: "Rate Calculator", to: "/rate-calculator" },
-  { label: "Weight Calculator", to: "/weight-calculator" },
+  { label: "Home", mobileLabel: "Home", icon: "home", to: "/" },
+  { label: "Tracking", mobileLabel: "Tracking", icon: "package_2", to: "/tracking" },
+  { label: "Rate Calculator", mobileLabel: "Rate Calc", icon: "calculate", to: "/rate-calculator" },
+  { label: "Weight Calculator", mobileLabel: "Weight Calc", icon: "scale", to: "/weight-calculator" },
 ];
 
 export const utilityLinks = [
