@@ -40,7 +40,7 @@ export default function SiteHeader() {
               <BrandMark compact />
             </Link>
 
-            <nav className="hidden items-center gap-2 xl:flex">
+            <nav className="hidden items-center gap-2 lg:flex">
               {primaryNavLinks.map((item) => (
                 <NavLink className={({ isActive }) => navLinkClass(isActive)} key={item.to} to={item.to}>
                   {item.label}
@@ -52,17 +52,17 @@ export default function SiteHeader() {
               <button
                 aria-expanded={mobileMenuOpen}
                 aria-label="Open page menu"
-                className="glass-panel inline-flex items-center gap-3 rounded-xl border border-white/60 px-3 py-2.5 text-on-surface xl:hidden"
+                className="glass-panel inline-flex items-center gap-3 rounded-xl border border-white/60 px-3 py-2.5 text-on-surface lg:hidden"
                 onClick={() => setMobileMenuOpen(true)}
                 type="button"
               >
                 <span className="hidden text-xs font-bold uppercase tracking-[0.18em] text-on-surface-variant sm:block">
                   Pages
                 </span>
-                <span className="flex h-6 items-center gap-1.5">
-                  <span className="h-5 w-[0.2rem] rounded-full bg-current" />
-                  <span className="h-5 w-[0.2rem] rounded-full bg-current" />
-                  <span className="h-5 w-[0.2rem] rounded-full bg-current" />
+                <span className="flex h-6 w-6 flex-col items-center justify-center gap-1">
+                  <span className="h-[0.16rem] w-5 rounded-full bg-current" />
+                  <span className="h-[0.16rem] w-5 rounded-full bg-current" />
+                  <span className="h-[0.16rem] w-5 rounded-full bg-current" />
                 </span>
               </button>
 
