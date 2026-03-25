@@ -6,7 +6,6 @@ import { Link, NavLink } from "react-router-dom";
 import { SITE_URL } from "../../data/landingContent";
 import { primaryNavLinks, utilityLinks } from "../../data/navigation";
 import BrandMark from "../landing/BrandMark";
-import UtilityMenu from "./UtilityMenu";
 
 function navLinkClass(isActive) {
   return [
@@ -36,7 +35,6 @@ export default function SiteHeader() {
             </nav>
 
             <div className="hidden items-center gap-3 md:flex">
-              <UtilityMenu buttonLabel="Utilities" />
               <a
                 className="kinetic-gradient inline-flex items-center gap-2 rounded-xl px-5 py-3 font-bold text-on-primary"
                 href={SITE_URL}
