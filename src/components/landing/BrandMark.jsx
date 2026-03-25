@@ -6,7 +6,7 @@ export default function BrandMark({ className = "", compact = false }) {
           Despatch
         </span>
         <span className="font-headline text-[clamp(2rem,4vw,5rem)] font-black tracking-[-0.08em] text-[#ff6a00]">
-          go
+          GO
         </span>
       </div>
       {!compact ? (

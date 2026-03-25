@@ -33,7 +33,7 @@ const calculatorSteps = [
     number: "01",
     title: "Enter route details",
     description:
-      "Add pickup and delivery pincodes so Despatchgo can map the shipment lane and identify the right pricing zone.",
+      "Add pickup and delivery pincodes so DespatchGO can map the shipment lane and identify the right pricing zone.",
     highlightClass: "group-hover:text-primary-fixed",
   },
   {
@@ -47,21 +47,21 @@ const calculatorSteps = [
     number: "03",
     title: "Get an instant estimate",
     description:
-      "Review the estimated Despatchgo rate, billable weight, divisor, and route type in one clean quote panel.",
+      "Review the estimated DespatchGO rate, billable weight, divisor, and route type in one clean quote panel.",
     highlightClass: "group-hover:text-tertiary-fixed",
   },
 ];
 
 const pricingFaqs = [
   {
-    question: "Are these final Despatchgo shipping charges?",
+    question: "Are these final DespatchGO shipping charges?",
     answer:
       "This calculator gives a strong pre-booking estimate based on route, shipment type, and billable weight. Final charges can vary slightly if the pickup team measures a different actual or volumetric weight.",
   },
   {
     question: "How is billable weight decided?",
     answer:
-      "Despatchgo compares actual weight with volumetric weight and bills the higher value. Express shipments use a 5000 divisor, while standard shipments use a 6000 divisor.",
+      "DespatchGO compares actual weight with volumetric weight and bills the higher value. Express shipments use a 5000 divisor, while standard shipments use a 6000 divisor.",
   },
   {
     question: "Can I use this before creating a shipment?",
@@ -149,7 +149,7 @@ export default function RateCalculatorPage() {
             <div className="relative aspect-square w-full max-w-md">
               <div className="absolute inset-0 rounded-full bg-primary/[0.05] blur-3xl animate-pulse" />
               <img
-                alt="Despatchgo pricing hero illustration."
+                alt="DespatchGO pricing hero illustration."
                 className="relative z-10 h-full w-full object-contain"
                 src="https://lh3.googleusercontent.com/aida-public/AB6AXuDoYR9RmO9-anwaqRTvURMsavI5q8tDfCnPj1snB2Pg3He5obEgAPLkkPhrBSMghCeqOs_YAOAGMnnknDTxzAzqFfrNCmvgJFiDyBX40ICdVo0NUtfXiT11febzaK6fk8HUtkCbTDmpPFrZS_15_bYjSYCA6nrvC561SjRBoiOYsMgue4qktTJWdS_goJbmmwqYqDCvi3alyLBa9jEed6uQooz1CGPiHXrCfxOERE5L1W-Z05-Q4O4gPeKKhkx1rHkkKg_orRhP1rTN"
               />
@@ -178,7 +178,7 @@ export default function RateCalculatorPage() {
                 <div>
                   <h2 className="font-headline text-3xl font-black text-on-surface">Instant Quote</h2>
                   <p className="mt-1 text-on-surface-variant">
-                    Estimate a Despatchgo rate before dispatching the parcel.
+                    Estimate a DespatchGO rate before dispatching the parcel.
                   </p>
                 </div>
               </div>
@@ -345,7 +345,7 @@ export default function RateCalculatorPage() {
                 <div className="flex flex-col gap-8 md:flex-row md:items-center md:justify-between">
                   <div className="space-y-2">
                     <p className="text-sm font-bold uppercase tracking-[0.18em] text-primary">
-                      Estimated Despatchgo rate
+                      Estimated DespatchGO rate
                     </p>
                     <div className="flex flex-wrap items-end gap-2">
                       <span className="text-4xl font-black text-on-surface">
@@ -411,7 +411,7 @@ export default function RateCalculatorPage() {
             How to calculate your shipping cost
           </h2>
           <p className="mx-auto max-w-2xl font-medium text-on-surface-variant">
-            Follow this quick Despatchgo flow to get a route-aware pricing estimate before pickup.
+            Follow this quick DespatchGO flow to get a route-aware pricing estimate before pickup.
           </p>
         </Reveal>
 
@@ -482,7 +482,7 @@ export default function RateCalculatorPage() {
                 Want to validate parcel weight too?
               </div>
               <div className="mt-2 text-on-surface-variant">
-                Open the Despatchgo weight calculator to compare actual, volumetric, and billable weight separately.
+                Open the DespatchGO weight calculator to compare actual, volumetric, and billable weight separately.
               </div>
             </div>
 

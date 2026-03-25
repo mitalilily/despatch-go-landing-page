@@ -1,9 +1,9 @@
 export const SITE_URL = "https://share.google/FYAlcK6HjsIz5UQjO";
-export const COMPANY_NAME = "Despatchgo";
-export const BRAND_NAME = "Despatchgo Logistics";
-export const OPERATOR_NAME = "Despatchgo";
+export const COMPANY_NAME = "DespatchGO";
+export const BRAND_NAME = "DespatchGO Logistics";
+export const OPERATOR_NAME = "DespatchGO";
 export const COMPANY_ADDRESS = "Head Office: Bangalore";
-export const COMPANY_EMAIL = "Despatchgoo@gmail.com";
+export const COMPANY_EMAIL = "despatchgo@gmail.com";
 export const BRANCHES = ["Hyderabad", "Bangalore", "Chennai"];
 
 export const navItems = [
@@ -70,24 +70,24 @@ export const integrations = [
 export const testimonials = [
   {
     quote:
-      "Despatchgo reduced our shipping costs by 30% in the first month. The rate comparison engine is a total game changer for our D2C brand.",
-    name: "Marcus Chen",
-    role: "CEO, Aura Home",
+      "DespatchGO reduced our shipping costs in the first month itself. The rate comparison flow made courier planning much easier for our D2C team.",
+    name: "Aarav Mehta",
+    role: "Founder, Aura Home",
     image:
       "https://lh3.googleusercontent.com/aida-public/AB6AXuBZJpAJcH9RgA0OdJzZx8b8hkAtyiZNoF6JuNVmBToceLnm1yMc9JuAdNU0zoNvQXTje1uwTknCa0wjuZcAFddP51WAmrxagBR3R9r3m8oo-AdckW7h1epceWcYn3PxF3km8F3yMjTyr3UNaHDjd5Y2AVaSp-adXvvTFY1X2z98FJexUKi82Es4XTKIvepNuxO49wGDbqHdSVtnYRRBHKkdMTAxZQDMyZMvSRbgZie7s61DrHfXad3pfYrfe8mObQJ2uE83yY95Vfs",
   },
   {
     quote:
-      "Finally, a logistics platform that does not look like it was built in 1995. The API is clean, and the NDR management is fantastic.",
-    name: "Sarah Jenkins",
-    role: "CTO, ModCloth",
+      "Finally, a logistics platform that feels modern and easy to use. The shipment workflow is clean, and NDR handling is much smoother for our ops team.",
+    name: "Priya Sharma",
+    role: "Operations Head, ModCloth India",
     image:
       "https://lh3.googleusercontent.com/aida-public/AB6AXuDVClirfOfVKG5n4MVymckC5hfGH-OlsM8_ahXWeVwc2ts8Lhwhlvn3f82IIJzgslHQF6Ge-MapuqHdv-Dzl30a7E-gw66uW1kNvp9JW8o3KeK5yq-BMDrpskC-Intk7CvYkg8Evi9T4wXE4nLarrADAu1RpIxo4nwHutyB56TBRNE5N2prXbQ_EAQS6pWqJqzqtibxntUWayO_-NI1ORHHpMYPD6ULOiG-ruHgxNIjsN5-UyRFf5J9V78r8x11AWWFC1s0eI0vKb0",
   },
   {
     quote:
-      "The kinetic tracking updates have significantly reduced our customer support tickets. Our buyers love the real-time visibility.",
-    name: "David Rodriguez",
+      "The tracking updates have cut down our support tickets noticeably. Customers love getting clearer shipment visibility without extra follow-up.",
+    name: "Rohan Iyer",
     role: "Ops Lead, GearUp",
     image:
       "https://lh3.googleusercontent.com/aida-public/AB6AXuC4fc3QFSEQmY6WxKdKB8JZFDNQUIl53KfSDjAU2OruboFA8t0_QZOA5ZsvnR2AIb4GH-MW2ItChHvn1gZY04kK5LNh07SIBojvOywjHUD77AThrKo4xcRxhnIdwZQuBmSY9Sv9VbKnrtYEt3d6cerZ_Z-Y_0wcX-o-3D-tD7qhHDnYRWAnC6NirkEYh1DNA8ICs6oN_8TebrVnCJnMJWEKKZiRo7rLhN8ryITSANByO89iXQApVtrvu1dJJ1sKo5Y0GBDd5WqfacA",
@@ -98,7 +98,7 @@ export const faqs = [
   {
     question: "How does courier aggregation work?",
     answer:
-      "Despatchgo consolidates shipping volumes from multiple businesses and uses that demand to unlock stronger carrier pricing, better serviceability, and one unified dashboard for dispatch, tracking, COD, and NDR workflows.",
+      "DespatchGO consolidates shipping volumes from multiple businesses and uses that demand to unlock stronger carrier pricing, better serviceability, and one unified dashboard for dispatch, tracking, COD, and NDR workflows.",
   },
   {
     question: "Do I need a separate account for each courier?",
@@ -108,6 +108,6 @@ export const faqs = [
   {
     question: "Is there a monthly subscription fee?",
     answer:
-      "The landing page focuses on the shipping and aggregation experience. Commercial details can be finalized directly through the Despatchgo team based on volume, workflow, and carrier mix.",
+      "The landing page focuses on the shipping and aggregation experience. Commercial details can be finalized directly through the DespatchGO team based on volume, workflow, and carrier mix.",
   },
 ];

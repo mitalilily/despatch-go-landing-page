@@ -4,17 +4,55 @@ import { useState } from "react";
 import { Link } from "react-router-dom";
 import Reveal from "../components/landing/Reveal";
 import Icon from "../components/landing/Icon";
-import UtilityMenu from "../components/site/UtilityMenu";
 import {
-  carrierPartners,
+  COMPANY_NAME,
   faqs,
-  integrations,
   SITE_URL,
   steps,
   testimonials,
-  trustLogos,
 } from "../data/landingContent";
-import { utilityLinks } from "../data/navigation";
+
+const quickActionCards = [
+  {
+    title: "Ship Now",
+    description: "Book a delivery in seconds with the best courier options available.",
+    cta: "Get rates & ship",
+    icon: "local_shipping",
+    to: "/rate-calculator",
+  },
+  {
+    title: "Track Shipment",
+    description: "Enter your tracking ID and get real-time updates across all couriers.",
+    cta: "Track package",
+    icon: "package_2",
+    to: "/tracking",
+  },
+  {
+    title: "Manage Deliveries",
+    description: "View, edit, and manage all your shipments in one place.",
+    cta: "Go to dashboard",
+    icon: "dashboard",
+    href: SITE_URL,
+  },
+];
+
+const heroHighlights = [
+  {
+    icon: "bolt",
+    title: "Best courier selection",
+    description: "Compare serviceability and cost before you ship.",
+  },
+  {
+    icon: "route",
+    title: "Real-time tracking",
+    description: "Check shipment movement across pickup, hubs, and last-mile delivery.",
+  },
+  {
+    icon: "inventory_2",
+    title: "Delivery management",
+    description: "Keep shipment actions, status, and customer updates in one place.",
+  },
+];
 
 export default function HomePage() {
   const [activeFaq, setActiveFaq] = useState(0);
@@ -29,62 +67,48 @@ export default function HomePage() {
         <div className="relative mx-auto grid max-w-screen-2xl gap-12 lg:grid-cols-[1.04fr,0.96fr] lg:items-start">
           <Reveal>
             <span className="font-label inline-flex rounded-full bg-primary-container px-4 py-1 text-sm font-bold text-on-primary-container">
-              CONNECTED SHIPPING UTILITIES
+              {COMPANY_NAME.toUpperCase()} SHIPPING PLATFORM
             </span>
 
             <h1 className="font-headline mt-6 max-w-4xl text-5xl font-black leading-[0.92] tracking-tight text-on-surface md:text-7xl">
-              Logistics pages that start fast, stay aligned, and keep the workflow connected.
+              Ship faster. Track clearly. Manage every delivery from one place.
             </h1>
 
             <p className="mt-6 max-w-2xl text-lg leading-8 text-on-surface-variant md:text-xl">
-              Despatchgo now opens with the hero anchored higher on the screen and routes directly
-              into dedicated tracking, rate calculator, and weight calculator pages with the same
-              responsive design system.
+              {COMPANY_NAME} brings shipping, tracking, and delivery control into one clean,
+              responsive workflow built for everyday operations.
             </p>
 
             <div className="mt-8 flex flex-wrap gap-3">
               <Chip
-                label="Responsive layout"
+                label="Best courier options"
                 sx={{ backgroundColor: "rgba(255,255,255,0.82)", color: "#111c2d", fontWeight: 700 }}
               />
               <Chip
-                label="Tailwind + Material UI"
+                label="Real-time tracking"
                 sx={{ backgroundColor: "rgba(255,255,255,0.82)", color: "#111c2d", fontWeight: 700 }}
               />
               <Chip
-                label="Persistent utility forms"
+                label="One delivery dashboard"
                 sx={{ backgroundColor: "rgba(255,255,255,0.82)", color: "#111c2d", fontWeight: 700 }}
               />
             </div>
 
             <div className="mt-8 flex flex-col gap-4 sm:flex-row sm:items-center">
-              <Link className="kinetic-gradient inline-flex items-center justify-center rounded-2xl px-6 py-3.5 font-bold text-on-primary" to="/tracking">
-                Open Tracking
+              <a
+                className="kinetic-gradient inline-flex items-center justify-center rounded-2xl px-6 py-3.5 font-bold text-on-primary"
+                href={SITE_URL}
+                rel="noreferrer"
+                target="_blank"
+              >
+                Get Started
+              </a>
+              <Link
+                className="inline-flex items-center justify-center rounded-2xl border border-outline-variant/30 bg-white px-6 py-3.5 font-bold text-on-surface"
+                to="/tracking"
+              >
+                Track Shipment
               </Link>
-              <Link className="inline-flex items-center justify-center rounded-2xl border border-outline-variant/30 bg-white px-6 py-3.5 font-bold text-on-surface" to="/rate-calculator">
-                Calculate Rates
-              </Link>
-              <div className="w-full sm:w-auto sm:min-w-64">
-                <UtilityMenu buttonLabel="Choose Utility" fullWidth />
-              </div>
-            </div>
-
-            <div className="mt-10 grid gap-4 sm:grid-cols-3">
-              <div className="rounded-[1.75rem] border border-outline-variant/20 bg-white/75 p-5">
-                <div className="text-sm font-bold uppercase tracking-[0.16em] text-on-surface-variant">Utilities</div>
-                <div className="mt-3 font-headline text-3xl font-black text-on-surface">3</div>
-                <div className="mt-2 text-sm leading-6 text-on-surface-variant">Tracking, rates, and billable weight.</div>
-              </div>
-              <div className="rounded-[1.75rem] border border-outline-variant/20 bg-white/75 p-5">
-                <div className="text-sm font-bold uppercase tracking-[0.16em] text-on-surface-variant">Persistence</div>
-                <div className="mt-3 font-headline text-3xl font-black text-on-surface">Local</div>
-                <div className="mt-2 text-sm leading-6 text-on-surface-variant">Saved values stay available between visits.</div>
-              </div>
-              <div className="rounded-[1.75rem] border border-outline-variant/20 bg-white/75 p-5">
-                <div className="text-sm font-bold uppercase tracking-[0.16em] text-on-surface-variant">Theme</div>
-                <div className="mt-3 font-headline text-3xl font-black text-on-surface">One</div>
-                <div className="mt-2 text-sm leading-6 text-on-surface-variant">Consistent hero, forms, cards, and footer on every page.</div>
-              </div>
             </div>
           </Reveal>
 
@@ -94,44 +118,33 @@ export default function HomePage() {
               <div className="flex flex-wrap items-start justify-between gap-4">
                 <div>
                   <div className="text-xs font-bold uppercase tracking-[0.18em] text-on-surface-variant">
-                    Utility Hub
+                    Everyday Workflow
                   </div>
                   <h2 className="font-headline mt-3 text-3xl font-bold text-on-surface">
-                    Jump into the exact shipping task you need.
+                    Built for teams that ship every day.
                   </h2>
                 </div>
-                <a
-                  className="rounded-full bg-primary/10 px-4 py-2 text-sm font-bold text-primary"
-                  href={SITE_URL}
-                  rel="noreferrer"
-                  target="_blank"
-                >
-                  Platform Access
-                </a>
+                <span className="rounded-full bg-primary/10 px-4 py-2 text-sm font-bold text-primary">
+                  Fast actions
+                </span>
               </div>
 
               <div className="mt-6 space-y-4">
-                {utilityLinks.map((item) => (
-                  <Link
-                    className="group block rounded-[1.6rem] border border-outline-variant/20 bg-white/85 p-5 transition-transform duration-300 hover:-translate-y-1"
-                    key={item.to}
-                    to={item.to}
+                {heroHighlights.map((item) => (
+                  <div
+                    className="rounded-[1.6rem] border border-outline-variant/20 bg-white/85 p-5"
+                    key={item.title}
                   >
                     <div className="flex items-start gap-4">
                       <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-surface-container text-primary">
                         <Icon>{item.icon}</Icon>
                       </div>
                       <div className="min-w-0">
-                        <div className="flex items-center justify-between gap-3">
-                          <h3 className="font-headline text-xl font-bold text-on-surface">{item.label}</h3>
-                          <Icon className="text-on-surface-variant transition-transform group-hover:translate-x-1">
-                            arrow_forward
-                          </Icon>
-                        </div>
+                        <h3 className="font-headline text-xl font-bold text-on-surface">{item.title}</h3>
                         <p className="mt-2 text-sm leading-6 text-on-surface-variant">{item.description}</p>
                       </div>
                     </div>
-                  </Link>
+                  </div>
                 ))}
               </div>
             </div>
@@ -139,39 +152,11 @@ export default function HomePage() {
         </div>
       </section>
 
-      <section className="bg-surface-container-low px-6 py-20 sm:px-8">
-        <Reveal className="mx-auto flex max-w-screen-2xl flex-col items-center justify-between gap-10 md:flex-row">
-          <div className="flex items-baseline gap-12">
-            <div>
-              <div className="font-headline text-5xl font-black text-primary">99.8%</div>
-              <div className="mt-2 text-sm font-bold uppercase tracking-[0.18em] text-on-surface-variant">
-                Precision Delivery
-              </div>
-            </div>
-            <div className="hidden h-16 w-px bg-outline-variant/30 md:block" />
-            <div>
-              <div className="font-headline text-5xl font-black text-on-surface">220+</div>
-              <div className="mt-2 text-sm font-bold uppercase tracking-[0.18em] text-on-surface-variant">
-                Global Countries
-              </div>
-            </div>
-          </div>
-
-          <div className="flex flex-wrap justify-center gap-10 opacity-55 grayscale transition-all duration-700 hover:grayscale-0">
-            {trustLogos.map((logo, index) => (
-              <Reveal key={logo} delay={0.04 + index * 0.03}>
-                <img alt={`Partner logo ${index + 1}`} className="h-8" src={logo} />
-              </Reveal>
-            ))}
-          </div>
-        </Reveal>
-      </section>
-
       <section className="px-6 py-24 sm:px-8" id="services">
         <div className="mx-auto max-w-screen-2xl">
           <Reveal>
             <h2 className="font-headline text-5xl font-black text-on-surface">
-              Connected logistics in <span className="text-primary-container">4 steps.</span>
+              From booking to dispatch in <span className="text-primary-container">4 steps.</span>
             </h2>
           </Reveal>
 
@@ -197,53 +182,54 @@ export default function HomePage() {
       </section>
 
       <section className="bg-surface px-6 py-24 sm:px-8">
-        <div className="mx-auto grid max-w-screen-2xl gap-8 lg:grid-cols-[1.1fr,0.9fr]">
+        <div className="mx-auto grid max-w-screen-2xl gap-8 lg:grid-cols-[1.05fr,0.95fr]">
           <Reveal className="rounded-[2.25rem] bg-on-surface p-10 text-surface sm:p-12">
             <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-white/10 text-primary-container">
               <Icon className="text-3xl">hub</Icon>
             </div>
-            <h3 className="font-headline mt-8 text-4xl font-bold">A utility-first landing flow.</h3>
+            <h3 className="font-headline mt-8 text-4xl font-bold">Ship, Track, or Manage — instantly</h3>
             <p className="mt-5 max-w-2xl text-lg leading-8 text-surface-variant">
-              Instead of forcing every visitor into one oversized hero panel, the site now routes
-              people directly into the action they need while preserving one clear visual language.
+              No confusion, no scrolling. Choose what you need and get it done.
             </p>
-            <div className="mt-10 flex flex-wrap gap-3">
-              {carrierPartners.map((partner) => (
-                <span
-                  className="rounded-full border border-white/10 bg-white/[0.06] px-4 py-2 text-sm font-bold text-surface"
-                  key={partner}
-                >
-                  {partner}
-                </span>
-              ))}
-            </div>
           </Reveal>
 
-          <div className="grid gap-8">
-            <Reveal className="rounded-[2rem] bg-surface-container-high p-8">
-              <h3 className="font-headline text-3xl font-bold">Native Store Sync</h3>
-              <p className="mt-4 text-sm leading-7 text-on-surface-variant">
-                Keep operations connected with store integrations and a shared shipping layer.
-              </p>
-              <div className="mt-8 flex flex-wrap gap-4">
-                {integrations.map((integration) => (
-                  <div
-                    className="flex h-20 w-20 items-center justify-center rounded-3xl bg-white"
-                    key={integration.name}
-                  >
-                    <img alt={integration.name} className="h-10 w-10" src={integration.src} />
+          <div className="grid gap-6">
+            {quickActionCards.map((card, index) => (
+              <Reveal
+                className="rounded-[2rem] border border-outline-variant/15 bg-surface-container-high p-8"
+                delay={0.04 + index * 0.05}
+                key={card.title}
+              >
+                <div className="flex items-start gap-4">
+                  <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-white text-primary">
+                    <Icon>{card.icon}</Icon>
                   </div>
-                ))}
-              </div>
-            </Reveal>
-
-            <Reveal className="rounded-[2rem] bg-primary-container p-8 text-on-primary-container" delay={0.08}>
-              <h3 className="font-headline text-3xl font-bold">Fast utility switching</h3>
-              <p className="mt-4 text-sm leading-7 text-on-primary-fixed-variant">
-                The header and hero both include clear utility navigation, so users can move between
-                tracking, rate checks, and weight checks without losing context.
-              </p>
-            </Reveal>
+                  <div className="min-w-0">
+                    <h3 className="font-headline text-2xl font-bold text-on-surface">{card.title}</h3>
+                    <p className="mt-3 text-sm leading-7 text-on-surface-variant">{card.description}</p>
+                    {card.to ? (
+                      <Link
+                        className="mt-5 inline-flex items-center gap-2 font-bold text-primary transition-colors hover:text-primary/80"
+                        to={card.to}
+                      >
+                        {card.cta}
+                        <Icon>arrow_forward</Icon>
+                      </Link>
+                    ) : (
+                      <a
+                        className="mt-5 inline-flex items-center gap-2 font-bold text-primary transition-colors hover:text-primary/80"
+                        href={card.href}
+                        rel="noreferrer"
+                        target="_blank"
+                      >
+                        {card.cta}
+                        <Icon>arrow_forward</Icon>
+                      </a>
+                    )}
+                  </div>
+                </div>
+              </Reveal>
+            ))}
           </div>
         </div>
       </section>
@@ -330,19 +316,16 @@ export default function HomePage() {
             <div className="kinetic-gradient ambient-shadow rounded-[2.5rem] px-8 py-14 text-center text-on-primary sm:px-12 sm:py-20">
               <h2 className="font-headline text-4xl font-black md:text-6xl">Ready to ship smarter?</h2>
               <p className="mx-auto mt-6 max-w-2xl text-lg leading-8 text-on-primary/[0.82]">
-                Move from tracking to pricing to billable-weight checks without breaking the flow.
+                Start using {COMPANY_NAME} for shipping, tracking, and delivery management in one place.
               </p>
-              <div className="mt-10 flex flex-wrap justify-center gap-4">
-                <Link className="rounded-2xl bg-white px-6 py-3.5 font-bold text-primary" to="/tracking">
-                  Start with Tracking
-                </Link>
+              <div className="mt-10 flex justify-center">
                 <a
-                  className="rounded-2xl border border-white/30 px-6 py-3.5 font-bold text-on-primary"
+                  className="rounded-2xl bg-white px-6 py-3.5 font-bold text-primary"
                   href={SITE_URL}
                   rel="noreferrer"
                   target="_blank"
                 >
-                  Open Platform
+                  Get Started
                 </a>
               </div>
             </div>

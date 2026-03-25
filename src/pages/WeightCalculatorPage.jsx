@@ -36,7 +36,7 @@ const measurementSteps = [
     number: "02",
     title: "Enter the dimensions",
     description:
-      "Add the measurements and actual shipment weight into the Despatchgo calculator to generate the dimensional weight.",
+      "Add the measurements and actual shipment weight into the DespatchGO calculator to generate the dimensional weight.",
     accentClass: "bg-secondary-fixed text-secondary",
   },
   {
@@ -55,9 +55,9 @@ const weightFaqs = [
       "Volumetric weight represents the space a parcel occupies in transit. Large but light cartons can cost more because they consume more vehicle capacity than their actual scale weight suggests.",
   },
   {
-    question: "Why does Despatchgo compare actual and volumetric weight?",
+    question: "Why does DespatchGO compare actual and volumetric weight?",
     answer:
-      "Carrier pricing depends on whichever measurement impacts capacity more. Despatchgo compares both values so you can see the likely billable weight before booking the shipment.",
+      "Carrier pricing depends on whichever measurement impacts capacity more. DespatchGO compares both values so you can see the likely billable weight before booking the shipment.",
   },
   {
     question: "Which divisor should I use?",
@@ -139,7 +139,7 @@ export default function WeightCalculatorPage() {
           <div className="relative aspect-square w-full max-w-lg overflow-hidden rounded-[3rem] bg-surface-container-low p-12">
             <div className="absolute inset-0 bg-gradient-to-br from-primary/5 to-primary-container/8" />
             <img
-              alt="Despatchgo box measurement illustration."
+              alt="DespatchGO box measurement illustration."
               className="relative z-10 h-full w-full object-contain drop-shadow-2xl"
               src="https://lh3.googleusercontent.com/aida-public/AB6AXuCA-TuNExyh_O_iWDdMTXTu66BRNapURFIezfzHGPLVa1A6OupVvX71viDgzbHbKa5ke4IEmdAstbrFl5ZqnuBQMoyltzGJZB9MdQ7nKP2nHe12t0aiYVgeoeTX7HzbcnfbDEUG8Ld_u04ICxjX19UN59BhDy1jM2FMiEavAn8WNpduhEloXfAgbTx_vdlvsCAECpHWrSKtEFn_d7cLrkQ2Zq41iM-X7dGxqrUl1E-bxX5ybEtP4fo3v7ilgBypc7T43rNrZcMQXh56"
             />
@@ -423,7 +423,7 @@ export default function WeightCalculatorPage() {
                 Need route pricing too?
               </div>
               <div className="mt-2 text-on-surface-variant">
-                Move from measurement to estimated courier charges with the Despatchgo rate calculator.
+                Move from measurement to estimated courier charges with the DespatchGO rate calculator.
               </div>
             </div>
 

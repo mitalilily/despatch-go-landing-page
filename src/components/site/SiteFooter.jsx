@@ -16,7 +16,7 @@ export default function SiteFooter() {
         <div>
           <BrandMark className="origin-left scale-[0.84]" />
           <p className="mt-6 max-w-md text-sm leading-7 text-on-surface-variant">
-            Despatchgo keeps tracking, rate checks, and billable-weight decisions connected in one
+            {COMPANY_NAME} keeps tracking, rate checks, and billable-weight decisions connected in one
             clean logistics surface.
           </p>
         </div>
@@ -44,7 +44,7 @@ export default function SiteFooter() {
               {COMPANY_EMAIL}
             </a>
             <a className="block transition-colors hover:text-primary" href={SITE_URL} rel="noreferrer" target="_blank">
-              despatchgo platform
+              {COMPANY_NAME} platform
             </a>
           </div>
         </div>

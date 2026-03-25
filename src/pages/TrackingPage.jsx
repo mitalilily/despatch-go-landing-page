@@ -22,7 +22,7 @@ const trackingSteps = [
     icon: "confirmation_number",
     title: "1. Get your tracking ID",
     description:
-      "Find your Despatchgo shipment number in the booking confirmation, dispatch email, or merchant panel.",
+      "Find your DespatchGO shipment number in the booking confirmation, dispatch email, or merchant panel.",
     accentClass: "bg-primary/10 text-primary",
   },
   {
@@ -36,14 +36,14 @@ const trackingSteps = [
     icon: "visibility",
     title: "3. Follow every milestone",
     description:
-      "See pickup, hub movement, linehaul progress, ETA, and last-mile updates from one Despatchgo screen.",
+      "See pickup, hub movement, linehaul progress, ETA, and last-mile updates from one DespatchGO screen.",
     accentClass: "bg-tertiary/10 text-tertiary",
   },
 ];
 
 const trackingFaqs = [
   {
-    question: "Where do I find my Despatchgo tracking number?",
+    question: "Where do I find my DespatchGO tracking number?",
     answer:
       "You can find it in your shipment confirmation email, booking dashboard, or the order details shared by your store or operations team.",
   },
@@ -55,7 +55,7 @@ const trackingFaqs = [
   {
     question: "What should I do if a shipment looks delayed?",
     answer:
-      "Check the latest milestone and ETA first. If the shipment has paused for longer than expected, contact the Despatchgo support team with the tracking number for a manual check.",
+      "Check the latest milestone and ETA first. If the shipment has paused for longer than expected, contact the DespatchGO support team with the tracking number for a manual check.",
   },
 ];
 
@@ -120,7 +120,7 @@ export default function TrackingPage() {
           <Reveal className="w-full max-w-2xl">
             <div className="relative mb-8 aspect-[16/9] w-full overflow-hidden rounded-[2.5rem] bg-primary-fixed">
               <img
-                alt="Despatchgo tracking hero visual."
+                alt="DespatchGO tracking hero visual."
                 className="h-full w-full object-cover opacity-80 mix-blend-multiply"
                 src="https://lh3.googleusercontent.com/aida-public/AB6AXuDmmKLBtDiVgv5zpuykBG_3-XA4Q7HM_NbFOyoMqGduhLgdEHIXeDPNu65f_-AcduQqeSpJllAft1Hwx1KfI4xYJDesYZgwZ8CzgeWIdiFRLDnJe02vAgRRq90XmmyFA7HKdDnCSCZtcaN4adnRmDyFOfp4rsKekIu5-MoF9V25MNYOivKlZRARuMOoUZ5ht_jkWuT_uGhd5s6_I5_8Og58VnthwpDRPChNIAfkc3NW-eFERQxCnY-vTLkoMgl9W4RT-p4FPMkuqt5t"
               />
@@ -152,7 +152,7 @@ export default function TrackingPage() {
                 sx={{ backgroundColor: "rgba(255,255,255,0.82)", color: "#111c2d", fontWeight: 700 }}
               />
               <Chip
-                label="Despatchgo network"
+                label="DespatchGO network"
                 sx={{ backgroundColor: "rgba(255,255,255,0.82)", color: "#111c2d", fontWeight: 700 }}
               />
             </div>
@@ -314,7 +314,7 @@ export default function TrackingPage() {
             </Reveal>
           ) : (
             <Reveal className="rounded-[2.5rem] border border-dashed border-outline-variant/40 bg-white/70 p-8 text-center text-on-surface-variant">
-              Enter a shipment ID above to load the live Despatchgo tracking board.
+              Enter a shipment ID above to load the live DespatchGO tracking board.
             </Reveal>
           )}
         </div>
@@ -405,7 +405,7 @@ export default function TrackingPage() {
                   Need shipping pricing too?
                 </div>
                 <div className="mt-2 text-on-surface-variant">
-                  Switch from tracking to rate calculation without leaving the Despatchgo workflow.
+                  Switch from tracking to rate calculation without leaving the DespatchGO workflow.
                 </div>
               </div>
               <div className="flex flex-wrap gap-3">

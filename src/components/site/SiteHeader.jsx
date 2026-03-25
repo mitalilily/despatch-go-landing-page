@@ -27,7 +27,7 @@ export default function SiteHeader() {
               <BrandMark compact />
             </Link>
 
-            <nav className="hidden items-center gap-2 lg:flex">
+            <nav className="hidden items-center gap-2 md:flex">
               {primaryNavLinks.map((item) => (
                 <NavLink className={({ isActive }) => navLinkClass(isActive)} key={item.to} to={item.to}>
                   {item.label}
@@ -35,7 +35,7 @@ export default function SiteHeader() {
               ))}
             </nav>
 
-            <div className="hidden items-center gap-3 lg:flex">
+            <div className="hidden items-center gap-3 md:flex">
               <UtilityMenu buttonLabel="Utilities" />
               <a
                 className="kinetic-gradient inline-flex items-center gap-2 rounded-xl px-5 py-3 font-bold text-on-primary"
@@ -50,7 +50,7 @@ export default function SiteHeader() {
 
             <IconButton
               aria-label="Open navigation"
-              className="lg:hidden"
+              className="md:hidden"
               onClick={() => setMobileOpen(true)}
               sx={{ color: "#111c2d" }}
             >
