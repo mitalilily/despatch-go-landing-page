@@ -18,7 +18,7 @@ export default function SiteLayout() {
     <div className="min-h-screen bg-background font-body text-on-surface selection:bg-primary-container selection:text-on-primary-container">
       <ScrollToTopOnRouteChange />
       <SiteHeader />
-      <main className="pt-[11.25rem] xl:pt-[6.75rem]">
+      <main className="pt-[13rem] xl:pt-[6.75rem]">
         <Outlet />
       </main>
       <SiteFooter />

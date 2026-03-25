@@ -51,14 +51,7 @@ export default function SiteHeader() {
 
         <div className="mt-3 xl:hidden">
           <div className="glass-panel ambient-shadow rounded-[1.5rem] border border-white/50 px-3 py-3 sm:px-4">
-            <div className="mb-3 flex items-center justify-between px-1">
-              <span className="text-[0.7rem] font-bold uppercase tracking-[0.24em] text-on-surface-variant">
-                Quick Navigate
-              </span>
-              <span className="text-xs font-medium text-on-surface-variant">Swipe across</span>
-            </div>
-
-            <nav className="grid auto-cols-[minmax(7.5rem,1fr)] grid-flow-col gap-2 overflow-x-auto pb-1 [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden">
+            <nav className="grid auto-cols-[minmax(7.5rem,1fr)] grid-flow-col gap-2 overflow-x-auto [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden">
               {primaryNavLinks.map((item) => (
                 <NavLink className={({ isActive }) => compactNavLinkClass(isActive)} key={item.to} to={item.to}>
                   <Icon className="text-[1.35rem]">{item.icon}</Icon>
