@@ -187,7 +187,7 @@ export default function HomePage() {
             <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-white/10 text-primary-container">
               <Icon className="text-3xl">hub</Icon>
             </div>
-            <h3 className="font-headline mt-8 text-4xl font-bold">Ship, Track, or Manage — instantly</h3>
+            <h3 className="font-headline mt-8 text-4xl font-bold">Ship, Track, or Manage - instantly</h3>
             <p className="mt-5 max-w-2xl text-lg leading-8 text-surface-variant">
               No confusion, no scrolling. Choose what you need and get it done.
             </p>
@@ -320,7 +320,7 @@ export default function HomePage() {
               </p>
               <div className="mt-10 flex justify-center">
                 <a
-                  className="rounded-2xl bg-white px-6 py-3.5 font-bold text-primary"
+                  className="kinetic-gradient inline-flex items-center justify-center rounded-2xl px-7 py-3.5 font-bold text-on-primary shadow-xl shadow-primary/25 ring-1 ring-white/35"
                   href={SITE_URL}
                   rel="noreferrer"
                   target="_blank"
