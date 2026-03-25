@@ -17,7 +17,7 @@ function detectZone(pickup, delivery) {
   return { label: "National lane", baseRate: 94, perKgRate: 41 };
 }
 
-export function buildShippingPreview(form) {
+export function buildWeightPreview(form) {
   const actualWeight = toNumber(form.weight);
   const length = toNumber(form.length);
   const width = toNumber(form.width);
@@ -26,14 +26,23 @@ export function buildShippingPreview(form) {
   const hasDimensions = length > 0 && width > 0 && height > 0;
   const volumetricWeight = hasDimensions ? (length * width * height) / divisor : 0;
   const billableWeight = Math.max(actualWeight, volumetricWeight);
+
+  return {
+    actualWeight,
+    volumetricWeight,
+    billableWeight,
+    divisor,
+    chargeableBasis: volumetricWeight > actualWeight ? "Volumetric weight" : "Actual weight",
+  };
+}
+
+export function buildShippingPreview(form) {
+  const weightPreview = buildWeightPreview(form);
   const hasPins = PINCODE_REGEX.test(form.pickup) && PINCODE_REGEX.test(form.delivery);
 
-  if (!hasPins || billableWeight <= 0) {
+  if (!hasPins || weightPreview.billableWeight <= 0) {
     return {
-      actualWeight,
-      volumetricWeight,
-      billableWeight,
-      divisor,
+      ...weightPreview,
       estimatedCost: null,
       zoneLabel: "Zone pending",
     };
@@ -41,16 +50,27 @@ export function buildShippingPreview(form) {
 
   const zone = detectZone(form.pickup, form.delivery);
   const serviceMultiplier = form.type === "Express" ? 1.18 : 1;
-  const estimatedCost = Math.round(zone.baseRate + billableWeight * zone.perKgRate * serviceMultiplier);
+  const estimatedCost = Math.round(
+    zone.baseRate + weightPreview.billableWeight * zone.perKgRate * serviceMultiplier,
+  );
 
   return {
-    actualWeight,
-    volumetricWeight,
-    billableWeight,
-    divisor,
+    ...weightPreview,
     estimatedCost,
     zoneLabel: zone.label,
   };
+}
+
+export function validateWeightCalculation(form) {
+  if (toNumber(form.weight) <= 0) {
+    return "Add the actual shipment weight in kilograms.";
+  }
+
+  if (toNumber(form.length) <= 0 || toNumber(form.width) <= 0 || toNumber(form.height) <= 0) {
+    return "Add package length, width, and height in centimeters.";
+  }
+
+  return "";
 }
 
 export function validateShippingEstimate(form) {
